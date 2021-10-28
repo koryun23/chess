@@ -8,7 +8,7 @@ class Cell(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
-        self.image = pg.Surface((40,40))
+        self.image = pg.Surface((60,60))
         self.image.fill(color)
         self.rect = self.image.get_rect()
     def update(self):
@@ -16,7 +16,7 @@ class Cell(pg.sprite.Sprite):
 class Game:
     def __init__(self):
         pg.init()
-        self.screen = pg.display.set_mode((500,500))
+        self.screen = pg.display.set_mode((480,480))
         pg.display.set_caption("Chess")
         self.playing = True
         self.clock = pg.time.Clock()
@@ -36,7 +36,7 @@ class Game:
                     cur_color = (255, 255, 255)
                 elif board[i][j] == "B":
                     cur_color =(0,0,0)
-                cell = Cell(cur_color, i*40,j*40)
+                cell = Cell(cur_color, i*60,j*60)
                 self.all_sprites.add(cell)
                 self.cells.add(cell)
         self.run()
