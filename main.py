@@ -3,6 +3,16 @@ from os import path
 from chess_board import *
 FPS = 30
 board = get_board()
+class Cell(pg.sprite.Sprite):
+    def __init__(self, color, x, y):
+        pg.sprite.Sprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.image = pg.Surface((40,40))
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+    def update(self):
+        self.rect.topleft = (self.x, self.y)
 class Game:
     def __init__(self):
         pg.init()
@@ -18,10 +28,21 @@ class Game:
             self.update()
             self.draw()
     def new(self):
+        self.all_sprites = pg.sprite.Group()
+        self.cells = pg.sprite.Group()
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] == "W":
+                    cur_color = (255, 255, 255)
+                elif board[i][j] == "B":
+                    cur_color =(0,0,0)
+                cell = Cell(cur_color, i*40,j*40)
+                self.all_sprites.add(cell)
+                self.cells.add(cell)
         self.run()
 
     def update(self):
-        pass
+        self.all_sprites.update()
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -30,7 +51,8 @@ class Game:
                 self.running = False
                 
     def draw(self):
-        pass
+        self.all_sprites.draw(self.screen)
+        pg.display.flip()
 
 g = Game()
 while g.playing:
