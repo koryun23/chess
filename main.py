@@ -3,9 +3,9 @@ from os import path
 from chess_board import *
 FPS = 30
 board = get_board()
-class Cell(pg.sprite.Sprite):
+class Cell:
     def __init__(self, color, x, y):
-        pg.sprite.Sprite.__init__(self)
+        # pg.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.image = pg.Surface((60,60))
@@ -20,6 +20,10 @@ class Game:
         pg.display.set_caption("Chess")
         self.playing = True
         self.clock = pg.time.Clock()
+    def load_data(self):
+        self.dir = path.dirname(__file__)
+        img_dir = path.dirname(self.dir, "img")
+
     def run(self):
         self.playing = True
         while self.playing:
@@ -28,21 +32,11 @@ class Game:
             self.update()
             self.draw()
     def new(self):
-        self.all_sprites = pg.sprite.Group()
-        self.cells = pg.sprite.Group()
-        for i in range(8):
-            for j in range(8):
-                if board[i][j] == "W":
-                    cur_color = (255, 255, 255)
-                elif board[i][j] == "B":
-                    cur_color =(0,0,0)
-                cell = Cell(cur_color, i*60,j*60)
-                self.all_sprites.add(cell)
-                self.cells.add(cell)
+
         self.run()
 
     def update(self):
-        self.all_sprites.update()
+        pass
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -51,7 +45,14 @@ class Game:
                 self.running = False
                 
     def draw(self):
-        self.all_sprites.draw(self.screen)
+        for i in range(8):
+            for j in range(8):
+                if board[i][j] == "W":
+                    cur_color = (255, 255, 255)
+                elif board[i][j] == "B":
+                    cur_color =(0,0,0)
+                cell = Cell(cur_color, i*60,j*60)
+                pg.draw.rect(self.screen, cur_color, pg.Rect(cell.x,cell.y,60,60))
         pg.display.flip()
 
 g = Game()
