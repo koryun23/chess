@@ -1,6 +1,8 @@
 import pygame as pg
 from os import path
+from chess_board import *
 FPS = 30
+board = get_board()
 class Game:
     def __init__(self):
         pg.init()
