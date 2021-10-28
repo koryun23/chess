@@ -29,6 +29,7 @@ class King:
         else:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
+        self.game.pieces.append(self)
 class Queen:
     def __init__(self, game, color, pos):
         self.color = color
@@ -43,6 +44,7 @@ class Queen:
         else:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
+        self.game.pieces.append(self)
 class Knight:
     def __init__(self, game, color, pos):
         self.color = color
@@ -57,6 +59,7 @@ class Knight:
         else:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
+        self.game.pieces.append(self)
 class Bishop:
     def __init__(self, game, color, pos):
         self.color = color
@@ -70,6 +73,7 @@ class Bishop:
             self.image = pg.image.load(self.images[0])
         else:
             self.image = pg.image.load(self.images[1])
+        self.game.pieces.append(self)
         # self.image.set_colorkey(WHITE)
 class Rook:
     def __init__(self, game, color, pos):
@@ -85,6 +89,7 @@ class Rook:
         else:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
+        self.game.pieces.append(self)
 class Pawn:
     def __init__(self, game, color, pos):
         self.color = color
@@ -99,6 +104,7 @@ class Pawn:
         else:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
+        self.game.pieces.append(self)
 class Game:
     def __init__(self):
         pg.init()
@@ -153,7 +159,6 @@ class Game:
             index = self.coords.index(pos)
             cell = self.cells[index]
 
-            color = (0,0,0) if piece.color=="B" else (255,255,255)
             rect = piece.image.get_rect()
             rect.topleft = (cell.x, cell.y)
             rect.x +=10
@@ -163,47 +168,39 @@ class Game:
         pg.display.flip()
         
     def load_pieces(self):
+        #create kings
         self.w_king = King(self, "W","e1")
         self.b_king = King(self, "B", "e8")
+
+        #create queens
         self.w_queen = Queen(self, "W", "d1")
         self.b_queen = Queen(self, "B", "d8")
+
+        #create rooks
         self.w_rook1 = Rook(self, "W", "a1")
         self.w_rook2 = Rook(self, "W", "h1")
         self.b_rook1 = Rook(self, "B", "a8")
         self.b_rook2 = Rook(self, "B", "h8")
+
+        #create bishops
         self.w_bishop1 = Bishop(self, "W", "c1")
         self.w_bishop2 = Bishop(self, "W", "f1")
         self.b_bishop1 = Bishop(self, "B", "c8")
         self.b_bishop2 = Bishop(self, "B", "f8")
+
+        #create knights
         self.w_knight1 = Knight(self, "W", "b1")
         self.w_knight2 = Knight(self, "W", "g1")
         self.b_knight1 = Knight(self, "B", "b8")
         self.b_knight2 = Knight(self, "B", "g8")
+        #create pawns
         for i in range(8):
             self.w_pawn = Pawn(self, "W", self.d[i]+"2")
             self.pieces.append(self.w_pawn)
         for j in range(8):
             self.b_pawn = Pawn(self, "B", self.d[j]+"7")
             self.pieces.append(self.b_pawn)    
-        self.pieces.append(self.w_king)
-        self.pieces.append(self.b_king)
-        self.pieces.append(self.w_queen)
-        self.pieces.append(self.b_queen)
-        self.pieces.append(self.w_rook1)
-        self.pieces.append(self.w_rook2)
-        self.pieces.append(self.b_rook1)
-        self.pieces.append(self.b_rook2)
-        self.pieces.append(self.w_bishop1)
-        self.pieces.append(self.w_bishop2)
-        self.pieces.append(self.b_bishop1)
-        self.pieces.append(self.b_bishop2)
-        self.pieces.append(self.w_knight1)
-        self.pieces.append(self.w_knight2)
-        self.pieces.append(self.b_knight1)
-        self.pieces.append(self.b_knight2)
-    
-        # self.pieces.append(self.w_king)
-    
+
 g = Game()
 while g.playing:
     g.new()
