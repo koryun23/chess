@@ -15,6 +15,7 @@ class Cell:
         self.rect =self.image.get_rect()
     def update(self):
         self.rect.topleft = (self.x, self.y)
+
 class King:
     def __init__(self,game, color, pos):
         self.cell = None
@@ -32,6 +33,7 @@ class King:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
+
 class Queen:
     def __init__(self, game, color, pos):
         self.cell = None
@@ -48,6 +50,7 @@ class Queen:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
+
 class Knight:
     def __init__(self, game, color, pos):
         self.cell = None
@@ -64,6 +67,7 @@ class Knight:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
+
 class Bishop:
     def __init__(self, game, color, pos):
         self.cell = None
@@ -96,6 +100,7 @@ class Rook:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
+
 class Pawn:
     def __init__(self, game, color, pos):
         self.cell = None
@@ -112,6 +117,7 @@ class Pawn:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
+
 class Game:
     def __init__(self):
         pg.init()
@@ -127,6 +133,7 @@ class Game:
         self.last_clicked=None
         self.load_data()
         self.load_pieces()
+
     def load_data(self):
         self.dir = path.dirname(__file__)
         self.img_dir = path.join(self.dir, "img")
@@ -144,6 +151,7 @@ class Game:
 
     def update(self):
         pass
+
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -163,13 +171,10 @@ class Game:
                 self.last_clicked=False
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
+            print(f"rect coords:{rect.x, rect.y}" )
             return True
         return False
-                        
-
-                
-
-                
+    
     def draw(self):
 
         for i in range(8):
@@ -233,7 +238,22 @@ class Game:
         for j in range(8):
             self.b_pawn = Pawn(self, "B", self.d[j]+"7")
             self.pieces.append(self.b_pawn)    
-
+    def coord_to_cell(self,coord):
+        d = {"a":0,"b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
+        x = d[coord[0]]*60
+        y = int(coord[1])*60
+        for cell in self.cells:
+            if cell.x == x and cell.y == y:
+                return cell
+    def piece_on_coord(self, coord):
+        d = {"a":0,"b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
+        x = d[coord[0]]*60
+        y = int(coord[1])*60
+        for piece in self.pieces:
+            if piece.x == x and piece.y == y:
+                return piece
+    # def highlight(self, cell):
+    #     cell.image.fill((0, 255, 255))
 g = Game()
 while g.playing:
     g.new()
