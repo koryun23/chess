@@ -18,6 +18,7 @@ class Cell:
 
 class King:
     def __init__(self,game, color, pos):
+        self.type = "KING"
         self.cell = None
         self.color = color
         self.pos = pos
@@ -36,6 +37,7 @@ class King:
 
 class Queen:
     def __init__(self, game, color, pos):
+        self.type = "QUEEN"
         self.cell = None
         self.color = color
         self.pos = pos
@@ -53,6 +55,7 @@ class Queen:
 
 class Knight:
     def __init__(self, game, color, pos):
+        self.type = "KNIGHT"
         self.cell = None
         self.color = color
         self.pos = pos
@@ -70,6 +73,7 @@ class Knight:
 
 class Bishop:
     def __init__(self, game, color, pos):
+        self.type = "BISHOP"
         self.cell = None
         self.color = color
         self.pos = pos
@@ -86,6 +90,7 @@ class Bishop:
         # self.image.set_colorkey(WHITE)
 class Rook:
     def __init__(self, game, color, pos):
+        self.type = "ROOK"
         self.cell = None
         self.color = color
         self.pos = pos
@@ -103,6 +108,7 @@ class Rook:
 
 class Pawn:
     def __init__(self, game, color, pos):
+        self.type = "PAWN"
         self.cell = None
         self.color = color
         self.pos = pos
@@ -120,11 +126,18 @@ class Pawn:
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
         possible_moves = []
-        if self.pos[1] == "2":
-            possible_moves.append(self.pos[0]+"3")
-            possible_moves.append(self.pos[0]+"4")
+        if self.color == "W":
+            if self.pos[1] == "2":
+                possible_moves.append(self.pos[0]+"3")
+                possible_moves.append(self.pos[0]+"4")
+            else:
+                possible_moves.append(self.pos[0]+str(int(self.pos[1])+1))
         else:
-            possible_moves.append(self.pos[0]+str(int(self.pos[1])+1))
+            if self.pos[1] == "7":
+                possible_moves.append(self.pos[0]+"6")
+                possible_moves.append(self.pos[0]+"5")
+            else:
+                possible_moves.append(self.pos[0]+str(int(self.pos[1])-1))
         return possible_moves
 class Game:
     def __init__(self):
@@ -138,6 +151,7 @@ class Game:
         self.coords = []
         self.pieces=[]
         self.rects = []
+        self.cells_to_highlight = []
 
         self.load_data()
         self.load_pieces()
@@ -169,20 +183,19 @@ class Game:
             if (event.type == pg.MOUSEBUTTONDOWN and event.button==1):
 
                 mouse = pg.mouse.get_pos()
-                print(mouse)
 
                 for cell in self.cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
                         coord = self.cell_to_coord(cell)
-                        print(coord)
-                        if self.piece_on_coord(coord):
-                            print(True)
-                        else:
-                            print(False)
+                        piece = self.piece_on_coord(coord)
+                        if piece:
+                            print(piece.possible_moves)
+                            for move in piece.possible_moves:
+                                possible_cell = self.coord_to_cell(move)
+                                self.cells_to_highlight.append(possible_cell)
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
-            print(f"rect coords:{rect.x, rect.y}" )
             return True
         return False
     
@@ -196,10 +209,17 @@ class Game:
                     cur_color =(165, 42, 42)
 
                 if len(self.cells)!=64:
-                    self.cells.append(Cell(cur_color, j*60,i*60))
+                    cell = Cell(cur_color, j*60,i*60)
+                    self.cells.append(cell)
+                for cell in self.cells_to_highlight:
+                    cell.image.fill((0,0,0))
+                print([(cell.x, cell.y) for cell in self.cells_to_highlight])
                 if len(self.coords)!= 64:
                     self.coords.append(self.d[j]+str(8-i))
                 pg.draw.rect(self.screen, cur_color, pg.Rect(j*60,i*60,60,60))
+                for cell in self.cells_to_highlight:
+                    if cell.x == j*60 and cell.y == i*60:
+                        pg.draw.rect(self.screen, (0,0,0), pg.Rect(cell.x,cell.y, 60,60))
                 if len(self.rects)!=64:
                     self.rects.append(pg.Rect(self.cells[-1].rect))
         for piece in self.pieces:
@@ -252,7 +272,7 @@ class Game:
     def coord_to_cell(self,coord):
         d = {"a":0,"b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
         x = d[coord[0]]*60
-        y = int(coord[1])*60
+        y = (8-int(coord[1]))*60
         for cell in self.cells:
             if cell.x == x and cell.y == y:
                 return cell
@@ -270,10 +290,6 @@ class Game:
             if piece.pos == coord:
                 return piece
         
-            # if piece.image.get_rect().x == x and piece.image.get_rect().y == y:
-            #     return piece
-    # def highlight(self, cell):
-    #     cell.image.fill((0, 255, 255))
 g = Game()
 while g.playing:
     g.new()
