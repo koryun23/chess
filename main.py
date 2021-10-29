@@ -117,7 +117,15 @@ class Pawn:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
-
+        self.possible_moves = self.get_possible_moves()
+    def get_possible_moves(self):
+        possible_moves = []
+        if self.pos[1] == "2":
+            possible_moves.append(self.pos[0]+"3")
+            possible_moves.append(self.pos[0]+"4")
+        else:
+            possible_moves.append(self.pos[0]+str(int(self.pos[1])+1))
+        return possible_moves
 class Game:
     def __init__(self):
         pg.init()
