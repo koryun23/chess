@@ -245,6 +245,12 @@ class Game:
         for cell in self.cells:
             if cell.x == x and cell.y == y:
                 return cell
+    def cell_to_coord(self, cell):
+        d = {0:"a",1:"b", 2:"c",3:"d", 4:"e",5:"f", 6:"g", 7:"h"}
+        x = d[cell.x//60]
+        y = str(cell.y//60)
+        coord = x+y
+        return coord
     def piece_on_coord(self, coord):
         d = {"a":0,"b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
         x = d[coord[0]]*60
