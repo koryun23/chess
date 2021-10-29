@@ -130,7 +130,7 @@ class Game:
         self.coords = []
         self.pieces=[]
         self.rects = []
-        self.last_clicked=None
+
         self.load_data()
         self.load_pieces()
 
@@ -158,8 +158,8 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
-            if (event.type == pg.MOUSEBUTTONDOWN and event.button==1) or self.last_clicked:
-                self.last_clicked=True
+            if (event.type == pg.MOUSEBUTTONDOWN and event.button==1):
+
                 mouse = pg.mouse.get_pos()
                 print(mouse)
 
@@ -168,7 +168,6 @@ class Game:
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
                         print("collided")
                         break
-                self.last_clicked=False
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             print(f"rect coords:{rect.x, rect.y}" )
