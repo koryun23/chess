@@ -151,7 +151,7 @@ class Game:
         self.coords = []
         self.pieces=[]
         self.rects = []
-        self.cells_to_highlight = []
+        self.highlighted_cells = []
 
         self.load_data()
         self.load_pieces()
@@ -193,7 +193,7 @@ class Game:
                             print(piece.possible_moves)
                             for move in piece.possible_moves:
                                 possible_cell = self.coord_to_cell(move)
-                                self.cells_to_highlight.append(possible_cell)
+                                self.highlighted_cells.append(possible_cell)
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             return True
@@ -211,13 +211,13 @@ class Game:
                 if len(self.cells)!=64:
                     cell = Cell(cur_color, j*60,i*60)
                     self.cells.append(cell)
-                for cell in self.cells_to_highlight:
+                for cell in self.highlighted_cells:
                     cell.image.fill((0,0,0))
-                print([(cell.x, cell.y) for cell in self.cells_to_highlight])
+                print([(cell.x, cell.y) for cell in self.highlighted_cells])
                 if len(self.coords)!= 64:
                     self.coords.append(self.d[j]+str(8-i))
                 pg.draw.rect(self.screen, cur_color, pg.Rect(j*60,i*60,60,60))
-                for cell in self.cells_to_highlight:
+                for cell in self.highlighted_cells:
                     if cell.x == j*60 and cell.y == i*60:
                         pg.draw.rect(self.screen, (0,0,0), pg.Rect(cell.x,cell.y, 60,60))
                 if len(self.rects)!=64:
