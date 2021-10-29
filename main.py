@@ -1,21 +1,23 @@
 import pygame as pg
 from os import path
+
+from pygame.constants import MOUSEBUTTONDOWN
 from chess_board import *
 FPS = 30
 WHITE = (255, 255, 255)
 board = get_board()
 class Cell:
     def __init__(self, color, x, y):
-        # pg.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.image = pg.Surface((60,60))
         self.image.fill(color)
-        self.rect = self.image.get_rect()
+        self.rect =self.image.get_rect()
     def update(self):
         self.rect.topleft = (self.x, self.y)
 class King:
     def __init__(self,game, color, pos):
+        self.cell = None
         self.color = color
         self.pos = pos
         self.game = game
@@ -32,6 +34,7 @@ class King:
         self.game.pieces.append(self)
 class Queen:
     def __init__(self, game, color, pos):
+        self.cell = None
         self.color = color
         self.pos = pos
         self.game = game
@@ -47,6 +50,7 @@ class Queen:
         self.game.pieces.append(self)
 class Knight:
     def __init__(self, game, color, pos):
+        self.cell = None
         self.color = color
         self.pos = pos
         self.game = game
@@ -62,6 +66,7 @@ class Knight:
         self.game.pieces.append(self)
 class Bishop:
     def __init__(self, game, color, pos):
+        self.cell = None
         self.color = color
         self.pos = pos
         self.game = game
@@ -77,6 +82,7 @@ class Bishop:
         # self.image.set_colorkey(WHITE)
 class Rook:
     def __init__(self, game, color, pos):
+        self.cell = None
         self.color = color
         self.pos = pos
         self.game = game
@@ -92,6 +98,7 @@ class Rook:
         self.game.pieces.append(self)
 class Pawn:
     def __init__(self, game, color, pos):
+        self.cell = None
         self.color = color
         self.pos = pos
         self.game = game
@@ -116,6 +123,8 @@ class Game:
         self.cells = []
         self.coords = []
         self.pieces=[]
+        self.rects = []
+        self.last_clicked=None
         self.load_data()
         self.load_pieces()
     def load_data(self):
@@ -141,6 +150,25 @@ class Game:
                 if self.playing:
                     self.playing = False
                 self.running = False
+            if (event.type == pg.MOUSEBUTTONDOWN and event.button==1) or self.last_clicked:
+                self.last_clicked=True
+                mouse = pg.mouse.get_pos()
+                print(mouse)
+
+                for cell in self.cells:
+                    rect = pg.Rect(cell.x, cell.y, 60,60)
+                    if self.rect_collided_point(rect, mouse[0], mouse[1]):
+                        print("collided")
+                        break
+                self.last_clicked=False
+    def rect_collided_point(self,rect, x, y):
+        if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
+            return True
+        return False
+                        
+
+                
+
                 
     def draw(self):
 
@@ -150,10 +178,14 @@ class Game:
                     cur_color = (255, 255, 255)
                 elif board[i][j] == "B":
                     cur_color =(165, 42, 42)
-                cell = Cell(cur_color, j*60,i*60)
-                self.cells.append(cell)
-                self.coords.append(self.d[j]+str(8-i))
-                pg.draw.rect(self.screen, cur_color, pg.Rect(cell.x,cell.y,60,60))
+
+                if len(self.cells)!=64:
+                    self.cells.append(Cell(cur_color, j*60,i*60))
+                if len(self.coords)!= 64:
+                    self.coords.append(self.d[j]+str(8-i))
+                pg.draw.rect(self.screen, cur_color, pg.Rect(j*60,i*60,60,60))
+                if len(self.rects)!=64:
+                    self.rects.append(pg.Rect(self.cells[-1].rect))
         for piece in self.pieces:
             pos = piece.pos
             index = self.coords.index(pos)
@@ -161,6 +193,7 @@ class Game:
 
             rect = piece.image.get_rect()
             rect.topleft = (cell.x, cell.y)
+            piece.cell = cell
             rect.x +=10
             rect.y+=10
             self.screen.blit(piece.image, rect)
