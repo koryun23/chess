@@ -166,8 +166,12 @@ class Game:
                 for cell in self.cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
-                        print("collided")
-                        break
+                        coord = self.cell_to_coord(cell)
+                        print(coord)
+                        if self.piece_on_coord(coord):
+                            print(True)
+                        else:
+                            print(False)
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             print(f"rect coords:{rect.x, rect.y}" )
@@ -246,17 +250,20 @@ class Game:
                 return cell
     def cell_to_coord(self, cell):
         d = {0:"a",1:"b", 2:"c",3:"d", 4:"e",5:"f", 6:"g", 7:"h"}
-        x = d[cell.x//60]
-        y = str(cell.y//60)
-        coord = x+y
+        y = d[cell.x//60]
+        x = str(8-cell.y//60)
+        coord = y+x
         return coord
     def piece_on_coord(self, coord):
         d = {"a":0,"b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
         x = d[coord[0]]*60
         y = int(coord[1])*60
         for piece in self.pieces:
-            if piece.x == x and piece.y == y:
+            if piece.pos == coord:
                 return piece
+        
+            # if piece.image.get_rect().x == x and piece.image.get_rect().y == y:
+            #     return piece
     # def highlight(self, cell):
     #     cell.image.fill((0, 255, 255))
 g = Game()
