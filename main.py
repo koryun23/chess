@@ -152,7 +152,7 @@ class Game:
         self.pieces=[]
         self.rects = []
         self.highlighted_cells = []
-
+        self.selected_piece = None
         self.load_data()
         self.load_pieces()
 
@@ -187,13 +187,23 @@ class Game:
                 for cell in self.cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
+
                         coord = self.cell_to_coord(cell)
                         piece = self.piece_on_coord(coord)
                         if piece:
+                            self.selected_piece = piece
                             print(piece.possible_moves)
                             for move in piece.possible_moves:
                                 possible_cell = self.coord_to_cell(move)
                                 self.highlighted_cells.append(possible_cell)
+                for cell in self.highlighted_cells:
+                    rect = pg.Rect(cell.x, cell.y, 60,60)
+                    if self.rect_collided_point(rect, mouse[0], mouse[1]):
+                        coord = self.cell_to_coord(cell)
+                        self.selected_piece.pos = coord
+                        self.highlighted_cells = []
+                        self.selected_piece.possible_moves = self.selected_piece.get_possible_moves()
+
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             return True
@@ -213,7 +223,6 @@ class Game:
                     self.cells.append(cell)
                 for cell in self.highlighted_cells:
                     cell.image.fill((0,0,0))
-                print([(cell.x, cell.y) for cell in self.highlighted_cells])
                 if len(self.coords)!= 64:
                     self.coords.append(self.d[j]+str(8-i))
                 pg.draw.rect(self.screen, cur_color, pg.Rect(j*60,i*60,60,60))
@@ -265,10 +274,8 @@ class Game:
         #create pawns
         for i in range(8):
             self.w_pawn = Pawn(self, "W", self.d[i]+"2")
-            self.pieces.append(self.w_pawn)
         for j in range(8):
             self.b_pawn = Pawn(self, "B", self.d[j]+"7")
-            self.pieces.append(self.b_pawn)    
     def coord_to_cell(self,coord):
         d = {"a":0,"b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
         x = d[coord[0]]*60
