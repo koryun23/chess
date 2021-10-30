@@ -36,7 +36,27 @@ class King:
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
-        pass
+        letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+        possible_moves = []
+        x = letters.index(self.pos[0])
+        y = int(self.pos[1])
+        directions = [
+            [x-1, y-1],
+            [x-1, y],
+            [x-1, y+1],
+            [x, y-1],
+            [x, y+1],
+            [x+1, y-1],
+            [x+1, y],
+            [x+1, y+1],
+        ]
+        for direction in directions:
+            current_x = direction[0]
+            current_y=  direction[1]
+            if current_x>=0 and current_x < 8 and current_y >=0 and current_y<8:
+                coord = str(letters[current_x])+str(current_y)
+                possible_moves.append(coord)
+        return possible_moves
 class Queen:
     def __init__(self, game, color, pos):
         self.type = "QUEEN"
@@ -167,7 +187,20 @@ class Pawn:
                 possible_moves.append(self.pos[0]+"5")
             else:
                 possible_moves.append(self.pos[0]+str(int(self.pos[1])-1))
+            current_index = letters.index(self.pos[0])
+            right = current_index+1
+            left = current_index-1
+            if right >= 0 and right <8:
+                right_pos = letters[right]+str(int(self.pos[1])-1)
+                right_piece = self.game.piece_on_coord(right_pos)
+                if right_piece:
+                    possible_moves.append(right_pos)
+            if left >= 0 and left<8:
+                left_pos = letters[left]+str(int(self.pos[1])-1)
 
+                left_piece = self.game.piece_on_coord(left_pos)
+                if left_piece:
+                    possible_moves.append(left_pos)
         return possible_moves
 class Game:
     def __init__(self):
@@ -222,15 +255,17 @@ class Game:
                         piece = self.piece_on_coord(coord)
 
                         if piece:
+                            print(piece.type)
                             self.selected_piece = piece
-                            print(piece.possible_moves)
                             for move in piece.possible_moves:
                                 possible_cell = self.coord_to_cell(move)
-                                self.highlighted_cells.append(possible_cell)
+                                if possible_cell:
+                                    self.highlighted_cells.append(possible_cell)
+                # print(self.highlighted_cells)
                 for cell in self.highlighted_cells:
+                    # if cell:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
-                        
                         coord = self.cell_to_coord(cell)
                         self.selected_piece.pos = coord
                         self.highlighted_cells = []
@@ -254,13 +289,15 @@ class Game:
                     cell = Cell(cur_color, j*60,i*60)
                     self.cells.append(cell)
                 for cell in self.highlighted_cells:
-                    cell.image.fill((0,0,0))
+                    # if cell:
+                        cell.image.fill((0,0,0))
                 if len(self.coords)!= 64:
                     self.coords.append(self.d[j]+str(8-i))
                 pg.draw.rect(self.screen, cur_color, pg.Rect(j*60,i*60,60,60))
                 for cell in self.highlighted_cells:
-                    if cell.x == j*60 and cell.y == i*60:
-                        pg.draw.rect(self.screen, (0,0,0), pg.Rect(cell.x,cell.y, 60,60))
+                    # if cell:
+                        if cell.x == j*60 and cell.y == i*60:
+                            pg.draw.rect(self.screen, (0,0,0), pg.Rect(cell.x,cell.y, 60,60))
                 if len(self.rects)!=64:
                     self.rects.append(pg.Rect(self.cells[-1].rect))
         for piece in self.pieces:
