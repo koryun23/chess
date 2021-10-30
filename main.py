@@ -34,7 +34,9 @@ class King:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
-
+        self.possible_moves = self.get_possible_moves()
+    def get_possible_moves(self):
+        pass
 class Queen:
     def __init__(self, game, color, pos):
         self.type = "QUEEN"
@@ -52,7 +54,9 @@ class Queen:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
-
+        self.possible_moves = self.get_possible_moves()
+    def get_possible_moves(self):
+        pass
 class Knight:
     def __init__(self, game, color, pos):
         self.type = "KNIGHT"
@@ -70,6 +74,9 @@ class Knight:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
+        self.possible_moves = self.get_possible_moves()
+    def get_possible_moves(self):
+        pass
 
 class Bishop:
     def __init__(self, game, color, pos):
@@ -88,6 +95,9 @@ class Bishop:
             self.image = pg.image.load(self.images[1])
         self.game.pieces.append(self)
         # self.image.set_colorkey(WHITE)
+        self.possible_moves = self.get_possible_moves()
+    def get_possible_moves(self):
+        pass
 class Rook:
     def __init__(self, game, color, pos):
         self.type = "ROOK"
@@ -105,6 +115,9 @@ class Rook:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
+        self.possible_moves = self.get_possible_moves()
+    def get_possible_moves(self):
+        pass
 
 class Pawn:
     def __init__(self, game, color, pos):
@@ -125,6 +138,7 @@ class Pawn:
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
+        letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
         possible_moves = []
         if self.color == "W":
             if self.pos[1] == "2":
@@ -132,12 +146,28 @@ class Pawn:
                 possible_moves.append(self.pos[0]+"4")
             else:
                 possible_moves.append(self.pos[0]+str(int(self.pos[1])+1))
+            current_index = letters.index(self.pos[0])
+            right = current_index+1
+            left = current_index-1
+            if right >= 0 and right <8:
+                right_pos = letters[right]+str(int(self.pos[1])+1)
+                right_piece = self.game.piece_on_coord(right_pos)
+                if right_piece:
+                    possible_moves.append(right_pos)
+            if left >= 0 and left<8:
+                left_pos = letters[left]+str(int(self.pos[1])+1)
+
+                left_piece = self.game.piece_on_coord(left_pos)
+                if left_piece:
+                    possible_moves.append(left_pos)
+
         else:
             if self.pos[1] == "7":
                 possible_moves.append(self.pos[0]+"6")
                 possible_moves.append(self.pos[0]+"5")
             else:
                 possible_moves.append(self.pos[0]+str(int(self.pos[1])-1))
+
         return possible_moves
 class Game:
     def __init__(self):
@@ -190,6 +220,7 @@ class Game:
 
                         coord = self.cell_to_coord(cell)
                         piece = self.piece_on_coord(coord)
+
                         if piece:
                             self.selected_piece = piece
                             print(piece.possible_moves)
@@ -199,11 +230,12 @@ class Game:
                 for cell in self.highlighted_cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
+                        
                         coord = self.cell_to_coord(cell)
                         self.selected_piece.pos = coord
                         self.highlighted_cells = []
-                        self.selected_piece.possible_moves = self.selected_piece.get_possible_moves()
-
+                        for piece in self.pieces:
+                            piece.possible_moves = piece.get_possible_moves()
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             return True
@@ -290,9 +322,6 @@ class Game:
         coord = y+x
         return coord
     def piece_on_coord(self, coord):
-        d = {"a":0,"b":1, "c":2, "d":3, "e":4, "f":5, "g":6, "h":7}
-        x = d[coord[0]]*60
-        y = int(coord[1])*60
         for piece in self.pieces:
             if piece.pos == coord:
                 return piece
