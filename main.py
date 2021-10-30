@@ -53,9 +53,12 @@ class King:
         for direction in directions:
             current_x = direction[0]
             current_y=  direction[1]
-            if current_x>=0 and current_x < 8 and current_y >=0 and current_y<8:
+            if current_x>=0 and current_x <= 8 and current_y >=0 and current_y<=8:
                 coord = str(letters[current_x])+str(current_y)
-                possible_moves.append(coord)
+                piece_on_coord = self.game.piece_on_coord(coord)
+                if not (piece_on_coord and piece_on_coord.color == self.color):
+                    possible_moves.append(coord)
+        print(possible_moves)
         return possible_moves
 class Queen:
     def __init__(self, game, color, pos):
@@ -162,10 +165,16 @@ class Pawn:
         possible_moves = []
         if self.color == "W":
             if self.pos[1] == "2":
-                possible_moves.append(self.pos[0]+"3")
-                possible_moves.append(self.pos[0]+"4")
+                coord = self.pos[0]+"3"
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
+                coord = self.pos[0]+"4"
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
             else:
-                possible_moves.append(self.pos[0]+str(int(self.pos[1])+1))
+                coord =self.pos[0]+str(int(self.pos[1])+1)
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
             current_index = letters.index(self.pos[0])
             right = current_index+1
             left = current_index-1
@@ -183,10 +192,16 @@ class Pawn:
 
         else:
             if self.pos[1] == "7":
-                possible_moves.append(self.pos[0]+"6")
-                possible_moves.append(self.pos[0]+"5")
+                coord = self.pos[0]+"6"
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
+                coord = self.pos[0]+"5"
+                if not self.game.piece_on_coord(coord): 
+                    possible_moves.append(coord)
             else:
-                possible_moves.append(self.pos[0]+str(int(self.pos[1])-1))
+                coord = self.pos[0]+str(int(self.pos[1])-1)
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
             current_index = letters.index(self.pos[0])
             right = current_index+1
             left = current_index-1
@@ -258,6 +273,7 @@ class Game:
                             print(piece.type)
                             self.selected_piece = piece
                             for move in piece.possible_moves:
+                                print(move)
                                 possible_cell = self.coord_to_cell(move)
                                 if possible_cell:
                                     self.highlighted_cells.append(possible_cell)
