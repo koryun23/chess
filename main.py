@@ -139,7 +139,8 @@ class Game:
                 for cell in self.highlighted_cells:
                     # if cell:
                         if cell.x == j*60 and cell.y == i*60:
-                            pg.draw.rect(self.screen, (0,0,0), pg.Rect(cell.x,cell.y, 60,60))
+                            pg.draw.rect(self.screen, (255,200,0), pg.Rect(cell.x,cell.y, 60,60))
+                            
                 if len(self.rects)!=64:
                     self.rects.append(pg.Rect(self.cells[-1].rect))
         for piece in self.pieces:
