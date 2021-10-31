@@ -288,8 +288,6 @@ class Rook:
                     break
 
         return possible_moves
-        
-
 class Pawn:
     def __init__(self, game, color, pos):
         self.type = "PAWN"
@@ -376,6 +374,8 @@ class Pawn:
                 if left_piece:
                     possible_moves.append(left_pos)
         return possible_moves
+
+
 class Game:
     def __init__(self):
         pg.init()
@@ -390,6 +390,7 @@ class Game:
         self.rects = []
         self.highlighted_cells = []
         self.selected_piece = None
+        self.turn = "W"
         self.load_data()
         self.load_pieces()
 
@@ -428,7 +429,7 @@ class Game:
                         coord = self.cell_to_coord(cell)
                         piece = self.piece_on_coord(coord)
 
-                        if piece:
+                        if piece and piece.color==self.turn:
                             if not self.highlighted_cells:
                                 self.selected_piece = piece
                                 self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
@@ -442,6 +443,10 @@ class Game:
                     # if cell:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
+                        if self.turn=="W":
+                            self.turn="B"
+                        else:
+                            self.turn="W"
                         print(self.selected_piece.pos)
                         coord = self.cell_to_coord(cell)
                         captured_piece = self.piece_on_coord(coord)
