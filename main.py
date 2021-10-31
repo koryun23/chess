@@ -79,7 +79,11 @@ class Queen:
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
-        pass
+        r = Rook(self.game, self.color, self.pos)
+        self.game.pieces.pop()
+        b = Bishop(self.game, self.color, self.pos)
+        self.game.pieces.pop()
+        return r.get_possible_moves()+b.get_possible_moves()
 class Knight:
     def __init__(self, game, color, pos):
         self.type = "KNIGHT"
@@ -161,6 +165,7 @@ class Rook:
         self.image.set_colorkey(WHITE)
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
+
     def get_possible_moves(self):
         letters =  ["a", "b", "c", "d", "e", "f", "g", "h"]
         possible_moves = []
