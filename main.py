@@ -313,12 +313,19 @@ class Pawn:
         possible_moves = []
         if self.color == "W":
             if self.pos[1] == "2":
+
+                coord = self.pos[0]+'4'
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
                 coord = self.pos[0]+"3"
                 if not self.game.piece_on_coord(coord):
                     possible_moves.append(coord)
-                coord = self.pos[0]+"4"
-                if not self.game.piece_on_coord(coord):
-                    possible_moves.append(coord)
+                else:
+                    if possible_moves:
+                        possible_moves.pop()
+
+                
+                
             else:
                 coord =self.pos[0]+str(int(self.pos[1])+1)
                 if not self.game.piece_on_coord(coord):
@@ -340,12 +347,16 @@ class Pawn:
 
         else:
             if self.pos[1] == "7":
-                coord = self.pos[0]+"6"
-                if not self.game.piece_on_coord(coord):
-                    possible_moves.append(coord)
+
                 coord = self.pos[0]+"5"
                 if not self.game.piece_on_coord(coord): 
                     possible_moves.append(coord)
+                coord = self.pos[0]+"6"
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
+                else:
+                    if possible_moves:
+                        possible_moves.pop()
             else:
                 coord = self.pos[0]+str(int(self.pos[1])-1)
                 if not self.game.piece_on_coord(coord):
@@ -418,25 +429,33 @@ class Game:
                         piece = self.piece_on_coord(coord)
 
                         if piece:
-                            # print(piece.type)
-                            self.selected_piece = piece
-                            self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
-                            print(self.selected_piece.possible_moves)
-                            for move in piece.possible_moves:
-                                # print(move)
-                                possible_cell = self.coord_to_cell(move)
-                                if possible_cell:
-                                    self.highlighted_cells.append(possible_cell)
-                # print(self.highlighted_cells)
+                            if not self.highlighted_cells:
+                                self.selected_piece = piece
+                                self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
+                                print(self.selected_piece.possible_moves)
+                                for move in piece.possible_moves:
+                                    possible_cell = self.coord_to_cell(move)
+                                    if possible_cell:
+                                        self.highlighted_cells.append(possible_cell)
+
                 for cell in self.highlighted_cells:
                     # if cell:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
+                        print(self.selected_piece.pos)
                         coord = self.cell_to_coord(cell)
+                        captured_piece = self.piece_on_coord(coord)
+                        if captured_piece and captured_piece.color!=self.selected_piece.color:
+                            
+                            self.pieces.remove(captured_piece)
+                            captured_piece = None
+
+                            
                         self.selected_piece.pos = coord
                         self.highlighted_cells = []
                         for piece in self.pieces:
                             piece.possible_moves = piece.get_possible_moves()
+
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             return True
