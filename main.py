@@ -77,17 +77,22 @@ class Game:
                         piece = self.piece_on_coord(coord)
 
                         if piece and piece.color==self.turn:
-                            if not self.highlighted_cells:
-                                self.selected_piece = piece
-                                self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
-                                print(self.selected_piece.possible_moves)
-                                for move in piece.possible_moves:
-                                    possible_cell = self.coord_to_cell(move)
-                                    if possible_cell:
-                                        self.highlighted_cells.append(possible_cell)
 
+                            if self.highlighted_cells:
+                                self.highlighted_cells=[]
+                            self.selected_piece = piece
+                            self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
+                            print(self.selected_piece.possible_moves)
+                            for move in piece.possible_moves:
+                                possible_cell = self.coord_to_cell(move)
+                                if possible_cell:
+                                    self.highlighted_cells.append(possible_cell)
+                        else:
+                            if cell not in self.highlighted_cells:
+                                if self.highlighted_cells:
+                                    self.highlighted_cells=[]     
                 for cell in self.highlighted_cells:
-                    # if cell:
+
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
                         if self.turn=="W":
