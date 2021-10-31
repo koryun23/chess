@@ -53,12 +53,12 @@ class King:
         for direction in directions:
             current_x = direction[0]
             current_y=  direction[1]
-            if current_x>=0 and current_x <= 8 and current_y >=0 and current_y<=8:
+            if current_x>=0 and current_x <= 7 and current_y >=1 and current_y<=8:
                 coord = str(letters[current_x])+str(current_y)
                 piece_on_coord = self.game.piece_on_coord(coord)
                 if not (piece_on_coord and piece_on_coord.color == self.color):
                     possible_moves.append(coord)
-        print(possible_moves)
+        # print(possible_moves)
         return possible_moves
 class Queen:
     def __init__(self, game, color, pos):
@@ -99,8 +99,30 @@ class Knight:
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
-        pass
+        possible_moves = []
+        letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+        x = letters.index(self.pos[0])
+        y = int(self.pos[1])
+        directions = [
+            [x-1, y+2],
+            [x-1, y-2],
+            [x+1, y+2],
+            [x+1, y-2],
+            [x+2,y+1],
+            [x-2, y+1],
+            [x+2, y-1],
+            [x-2, y-1]
+        ]
+        for direction in directions:
+            current_x = direction[0]
+            current_y = direction[1]
+            if current_x>=0 and current_x<=7 and current_y>=1 and current_y<=8:
+                coord = str(letters[current_x])+str(current_y)
+                piece = self.game.piece_on_coord(coord)
+                if not (piece and piece.color == self.color):
+                    possible_moves.append(coord)
 
+        return possible_moves
 class Bishop:
     def __init__(self, game, color, pos):
         self.type = "BISHOP"
@@ -120,7 +142,7 @@ class Bishop:
         # self.image.set_colorkey(WHITE)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
-        pass
+        return []
 class Rook:
     def __init__(self, game, color, pos):
         self.type = "ROOK"
@@ -140,7 +162,51 @@ class Rook:
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
-        pass
+        letters =  ["a", "b", "c", "d", "e", "f", "g", "h"]
+        possible_moves = []
+        #vertical
+        for i in range(int(self.pos[1]),9):
+            coord = self.pos[0]+str(i)
+            if coord != self.pos:
+
+                piece = self.game.piece_on_coord(coord)
+                if not(piece and piece.color == self.color):
+                    possible_moves.append(coord)
+                else:
+                    break
+        for i in range(int(self.pos[1]),0,-1):
+            coord = self.pos[0]+str(i)
+            if coord != self.pos:
+
+                piece = self.game.piece_on_coord(coord)
+                if not(piece and piece.color == self.color):
+                    possible_moves.append(coord)
+                else:
+                    break
+        #horizontal
+        for i in range(letters.index(self.pos[0]),8):
+            coord = letters[i]+self.pos[1]
+            if coord!= self.pos: 
+
+                piece = self.game.piece_on_coord(coord)
+                if not(piece and piece.color == self.color):
+
+                    possible_moves.append(coord)
+                else:
+                    break
+        for i in range(letters.index(self.pos[0]),-1, -1):
+            coord = letters[i]+self.pos[1]
+            if coord!= self.pos: 
+
+                piece = self.game.piece_on_coord(coord)
+                if not(piece and piece.color == self.color):
+
+                    possible_moves.append(coord)
+                else:
+                    break
+
+        return possible_moves
+        
 
 class Pawn:
     def __init__(self, game, color, pos):
@@ -270,10 +336,12 @@ class Game:
                         piece = self.piece_on_coord(coord)
 
                         if piece:
-                            print(piece.type)
+                            # print(piece.type)
                             self.selected_piece = piece
+                            self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
+                            print(self.selected_piece.possible_moves)
                             for move in piece.possible_moves:
-                                print(move)
+                                # print(move)
                                 possible_cell = self.coord_to_cell(move)
                                 if possible_cell:
                                     self.highlighted_cells.append(possible_cell)
