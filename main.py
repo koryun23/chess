@@ -146,7 +146,71 @@ class Bishop:
         # self.image.set_colorkey(WHITE)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
-        return []
+        possible_moves =[]
+        letters =["a", "b", "c", "d", "e", "f", "g", "h"]
+        #pos = "c4"
+        x = int(self.pos[1])
+        y = letters.index(self.pos[0])
+        while x>=1 and y >=0:
+            coord = letters[y]+str(x)
+            if coord!=self.pos:
+                piece = self.game.piece_on_coord(coord)
+                if piece and piece.color == self.color:
+                    break
+                elif piece:
+                    possible_moves.append(coord)
+                    break
+                possible_moves.append(coord)
+            x-=1
+            y-=1
+        x = int(self.pos[1])
+        y = letters.index(self.pos[0])
+        while x<=8 and y >=0:
+            coord = letters[y]+str(x)
+            if coord != self.pos:
+                piece = self.game.piece_on_coord(coord)
+                if piece and piece.color == self.color:
+                    break
+                elif piece:
+                    possible_moves.append(coord)
+                    break
+                possible_moves.append(coord)
+            x+=1
+            y-=1
+        x = int(self.pos[1])
+        y = letters.index(self.pos[0])
+        while x<=8 and y< len(letters):
+            coord = letters[y]+str(x)
+    
+            if coord!=self.pos:
+                piece = self.game.piece_on_coord(coord)
+                if piece and piece.color == self.color:
+                    break
+                elif piece:
+                    possible_moves.append(coord)
+                    break
+                possible_moves.append(coord)
+            x+=1
+            y+=1
+        x = int(self.pos[1])
+        y = letters.index(self.pos[0])
+        while x>=1 and y<len(letters):
+            coord = letters[y]+str(x)
+            if coord!= self.pos:
+                piece = self.game.piece_on_coord(coord)
+                if piece and piece.color == self.color:
+                    break
+                elif piece:
+                    possible_moves.append(coord)
+                    break
+                possible_moves.append(coord)
+
+            x-=1
+            y+=1
+            
+
+
+        return possible_moves
 class Rook:
     def __init__(self, game, color, pos):
         self.type = "ROOK"
@@ -175,8 +239,12 @@ class Rook:
             if coord != self.pos:
 
                 piece = self.game.piece_on_coord(coord)
-                if not(piece and piece.color == self.color):
+                if not(piece):
                     possible_moves.append(coord)
+                
+                elif piece and piece.color != self.color:
+                    possible_moves.append(coord)
+                    break
                 else:
                     break
         for i in range(int(self.pos[1]),0,-1):
@@ -184,8 +252,11 @@ class Rook:
             if coord != self.pos:
 
                 piece = self.game.piece_on_coord(coord)
-                if not(piece and piece.color == self.color):
+                if not(piece):
                     possible_moves.append(coord)
+                elif piece and piece.color != self.color:
+                    possible_moves.append(coord)
+                    break
                 else:
                     break
         #horizontal
@@ -194,9 +265,12 @@ class Rook:
             if coord!= self.pos: 
 
                 piece = self.game.piece_on_coord(coord)
-                if not(piece and piece.color == self.color):
+                if not(piece):
 
                     possible_moves.append(coord)
+                elif piece and piece.color != self.color:
+                    possible_moves.append(coord)
+                    break
                 else:
                     break
         for i in range(letters.index(self.pos[0]),-1, -1):
@@ -204,9 +278,12 @@ class Rook:
             if coord!= self.pos: 
 
                 piece = self.game.piece_on_coord(coord)
-                if not(piece and piece.color == self.color):
+                if not(piece):
 
                     possible_moves.append(coord)
+                elif piece and piece.color != self.color:
+                    possible_moves.append(coord)
+                    break
                 else:
                     break
 
