@@ -46,13 +46,13 @@ class Pawn:
             if right >= 0 and right <8:
                 right_pos = letters[right]+str(int(self.pos[1])+1)
                 right_piece = self.game.piece_on_coord(right_pos)
-                if right_piece:
+                if right_piece and right_piece.color!=self.color:
                     possible_moves.append(right_pos)
             if left >= 0 and left<8:
                 left_pos = letters[left]+str(int(self.pos[1])+1)
 
                 left_piece = self.game.piece_on_coord(left_pos)
-                if left_piece:
+                if left_piece and left_piece.color!= self.color:
                     possible_moves.append(left_pos)
 
         else:
@@ -77,12 +77,12 @@ class Pawn:
             if right >= 0 and right <8:
                 right_pos = letters[right]+str(int(self.pos[1])-1)
                 right_piece = self.game.piece_on_coord(right_pos)
-                if right_piece:
+                if right_piece and right_piece.color!=self.color:
                     possible_moves.append(right_pos)
             if left >= 0 and left<8:
                 left_pos = letters[left]+str(int(self.pos[1])-1)
 
                 left_piece = self.game.piece_on_coord(left_pos)
-                if left_piece:
+                if left_piece and left_piece.color!=self.color:
                     possible_moves.append(left_pos)
         return possible_moves
