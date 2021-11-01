@@ -53,7 +53,7 @@ class King:
                 piece = self.game.piece_on_coord("h1")
                 if piece and piece.type=="ROOK" and piece.moved==False:
                     possible_moves.append("g1")
-
+                
             if not self.game.piece_on_coord("d1") and not self.game.piece_on_coord("c1") and not self.game.piece_on_coord("b1"):
                 piece = self.game.piece_on_coord("a1")
                 if piece and piece.type=="ROOK" and not piece.moved:
