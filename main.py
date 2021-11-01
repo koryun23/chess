@@ -82,6 +82,8 @@ class Game:
                                 self.highlighted_cells=[]
                             self.selected_piece = piece
                             self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
+                            for p in self.pieces:
+                                p.possible_moves = p.get_possible_moves()
                             for move in piece.possible_moves:
                                 possible_cell = self.coord_to_cell(move)
                                 if possible_cell:
@@ -105,9 +107,8 @@ class Game:
                             
                             self.pieces.remove(captured_piece)
                             captured_piece = None
-
-                            
                         self.selected_piece.pos = coord
+
                         self.highlighted_cells = []
                         for piece in self.pieces:
                             piece.possible_moves = piece.get_possible_moves()

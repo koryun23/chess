@@ -48,27 +48,61 @@ class King:
                 if not (piece_on_coord and piece_on_coord.color == self.color):
                     possible_moves.append(coord)
 
+                    for p in self.game.pieces:
+                        if p.type!="KING":
+                            if coord in p.possible_moves:
+                                possible_moves.pop()
+                                break
+
         if self.color == "W" and self.pos=="e1" and not self.moved:
             if not self.game.piece_on_coord("f1") and not self.game.piece_on_coord("g1"):
                 piece = self.game.piece_on_coord("h1")
                 if piece and piece.type=="ROOK" and piece.moved==False:
                     possible_moves.append("g1")
-                
+
+                    coords = ["f1","g1"]
+
+                    for p in self.game.pieces:
+                        if (coords[0] in p.possible_moves or coords[1] in p.possible_moves) and p.color=="B":
+                            print("Cant castle")
+
+                            possible_moves.pop()
+                            break
+
             if not self.game.piece_on_coord("d1") and not self.game.piece_on_coord("c1") and not self.game.piece_on_coord("b1"):
                 piece = self.game.piece_on_coord("a1")
                 if piece and piece.type=="ROOK" and not piece.moved:
                     possible_moves.append("c1")
 
+                    coords = ["d1", "c1"]
+                    for p in self.game.pieces:
+                        if (coords[0] in p.possible_moves or coords[1] in p.possible_moves) and p.color=="B":
+
+                            possible_moves.pop()
+                            break
+
+
         if self.color=="B" and self.pos == "e8" and not self.moved:
             if not self.game.piece_on_coord("f8") and not self.game.piece_on_coord("g8"):
                 piece = self.game.piece_on_coord("h8")
+
                 if piece and piece.type=="ROOK" and not piece.moved:
                     possible_moves.append("g8")
-
+                    coords = ["f8", "g8"]
+                    for p in self.game.pieces:
+                        if(coords[0] in p.possible_moves or coords[1] in p.possible_moves) and p.color=="W":
+                            possible_moves.pop()
+                            break
             if not self.game.piece_on_coord("d8") and not self.game.piece_on_coord("c8") and not self.game.piece_on_coord("b8"):
                 piece = self.game.piece_on_coord("a8")
+                
                 if piece and piece.type == "ROOK" and not piece.moved:
                     possible_moves.append("c8")
+                    coords = ["d8", "c8"]
+                    for p in self.game.pieces:
+                        if(coords[0] in p.possible_moves or coords[1] in p.possible_moves) and p.color=="W":
+                            possible_moves.pop()
+                            break
 
         # print(possible_moves)
         return possible_moves

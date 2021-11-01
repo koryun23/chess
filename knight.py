@@ -42,5 +42,6 @@ class Knight:
                 piece = self.game.piece_on_coord(coord)
                 if not (piece and piece.color == self.color):
                     possible_moves.append(coord)
-
+        print(possible_moves)
+        print(self.color)
         return possible_moves
