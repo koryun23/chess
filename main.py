@@ -82,7 +82,6 @@ class Game:
                                 self.highlighted_cells=[]
                             self.selected_piece = piece
                             self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
-                            print(self.selected_piece.possible_moves)
                             for move in piece.possible_moves:
                                 possible_cell = self.coord_to_cell(move)
                                 if possible_cell:
@@ -99,7 +98,7 @@ class Game:
                             self.turn="B"
                         else:
                             self.turn="W"
-                        print(self.selected_piece.pos)
+
                         coord = self.cell_to_coord(cell)
                         captured_piece = self.piece_on_coord(coord)
                         if captured_piece and captured_piece.color!=self.selected_piece.color:
@@ -112,7 +111,30 @@ class Game:
                         self.highlighted_cells = []
                         for piece in self.pieces:
                             piece.possible_moves = piece.get_possible_moves()
+                        if self.selected_piece.type=="KING":
+                            if self.selected_piece.color=="W":
+                                if self.w_king.moved==False:
+                                    if coord=="g1":
+                                        self.w_rook2.pos="f1"
+                                        self.w_king.moved=True
+                                    elif coord=="c1":
+                                        self.w_rook1.pos="d1"
+                                        self.w_king.moved=True
+                            else:
+                                print(self.b_king.moved)
+                                if self.b_king.moved==False:
+                                    print(coord)
+                                    if coord=="g8":
+                                        self.b_rook2.pos="f8"
+                                        self.b_king.moved= True
+                                    elif coord=="c8":
+                                        self.b_rook1.pos = "d8"
+                                        self.b_king.moved=True
+                                            
+                        elif self.selected_piece.type=="ROOK":
+                            self.selected_piece.moved=True
 
+                            
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             return True
@@ -131,15 +153,13 @@ class Game:
                     cell = Cell(cur_color, j*60,i*60)
                     self.cells.append(cell)
                 for cell in self.highlighted_cells:
-                    # if cell:
-                        cell.image.fill((0,0,0))
+                    cell.image.fill((0,0,0))
                 if len(self.coords)!= 64:
                     self.coords.append(self.d[j]+str(8-i))
                 pg.draw.rect(self.screen, cur_color, pg.Rect(j*60,i*60,60,60))
                 for cell in self.highlighted_cells:
-                    # if cell:
-                        if cell.x == j*60 and cell.y == i*60:
-                            pg.draw.rect(self.screen, (255,200,0), pg.Rect(cell.x,cell.y, 60,60))
+                    if cell.x == j*60 and cell.y == i*60:
+                        pg.draw.rect(self.screen, (255,200,0), pg.Rect(cell.x,cell.y, 60,60))
                             
                 if len(self.rects)!=64:
                     self.rects.append(pg.Rect(self.cells[-1].rect))

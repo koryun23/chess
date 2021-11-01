@@ -2,6 +2,7 @@ from os import path
 import pygame as pg
 class Rook:
     def __init__(self, game, color, pos):
+        self.moved=False
         self.type = "ROOK"
         self.cell = None
         self.color = color
