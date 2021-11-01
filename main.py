@@ -77,17 +77,28 @@ class Game:
                         piece = self.piece_on_coord(coord)
 
                         if piece and piece.color==self.turn:
-
-                            if self.highlighted_cells:
-                                self.highlighted_cells=[]
-                            self.selected_piece = piece
-                            self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
-                            for p in self.pieces:
-                                p.possible_moves = p.get_possible_moves()
-                            for move in piece.possible_moves:
-                                possible_cell = self.coord_to_cell(move)
-                                if possible_cell:
-                                    self.highlighted_cells.append(possible_cell)
+                            if piece.type=="KING":
+                                print(piece.color+" "+str(piece.is_under_check))
+                            # if not (piece.type=="KING" and piece.color=="W" and piece.is_under_check) and \
+                            #     not(piece.type=="KING" and piece.color=="B" and piece.is_under_check):
+                            if not self.w_king.is_under_check and not self.b_king.is_under_check:
+                                if self.highlighted_cells:
+                                    self.highlighted_cells=[]
+                                self.selected_piece = piece
+                                self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
+                                for p in self.pieces:
+                                    p.possible_moves = p.get_possible_moves()
+                                for p in self.pieces:
+                                    if p.color=="W" and self.b_king.pos in p.possible_moves:
+                                        self.b_king.is_under_check=True
+                                    elif p.color=="B" and self.w_king.pos in p.possible_moves:
+                                        self.w_king.is_under_check=True
+                                for move in piece.possible_moves:
+                                    possible_cell = self.coord_to_cell(move)
+                                    if possible_cell:
+                                        self.highlighted_cells.append(possible_cell)
+                            else:
+                                pass
                         else:
                             if cell not in self.highlighted_cells:
                                 if self.highlighted_cells:
@@ -112,6 +123,14 @@ class Game:
                         self.highlighted_cells = []
                         for piece in self.pieces:
                             piece.possible_moves = piece.get_possible_moves()
+                        for piece in self.pieces:
+                            if piece.color=="W" and self.b_king.pos in piece.possible_moves:
+                                self.b_king.is_under_check=True
+                                print("CHECK")
+                            elif piece.color=="B" and self.w_king.pos in piece.possible_moves:
+                                self.w_king.is_under_check = True
+                                print("CHECK")
+
                         if self.selected_piece.type=="KING":
                             if self.selected_piece.color=="W":
                                 if self.w_king.moved==False:

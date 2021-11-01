@@ -7,6 +7,7 @@ class King:
     def __init__(self,game, color, pos):
         self.moved = False
         self.castled = False
+        self.is_under_check=False
         self.type = "KING"
         self.cell = None
         self.color = color
