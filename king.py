@@ -50,7 +50,7 @@ class King:
 
                     for p in self.game.pieces:
                         if p.type!="KING":
-                            if coord in p.possible_moves:
+                            if coord in p.possible_moves and p.color!= self.color:
                                 possible_moves.pop()
                                 break
 
