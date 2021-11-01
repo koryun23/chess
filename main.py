@@ -140,6 +140,8 @@ class Game:
                                     elif coord=="c1":
                                         self.w_rook1.pos="d1"
                                         self.w_king.moved=True
+                                    else:
+                                        self.w_king.moved=True
                             else:
                                 print(self.b_king.moved)
                                 if self.b_king.moved==False:
@@ -150,7 +152,8 @@ class Game:
                                     elif coord=="c8":
                                         self.b_rook1.pos = "d8"
                                         self.b_king.moved=True
-                                            
+                                    else:
+                                        self.b_king.moved=True
                         elif self.selected_piece.type=="ROOK":
                             self.selected_piece.moved=True
 
