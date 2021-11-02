@@ -35,7 +35,7 @@ class Pawn:
                 else:
                     if possible_moves:
                         possible_moves.pop()
-            if self.pos[1] == "5":
+            elif self.pos[1] == "5":
                 for piece in self.game.pieces:
                     if piece.type=="PAWN" and piece.color=="B" and piece.pos[1]=="5":
                         index = letters.index(self.pos[0])
