@@ -42,6 +42,7 @@ class Game:
         self.last_moved_piece = None
         self.load_data()
         self.load_pieces()
+        self.king_attack_cells = []
 
     def load_data(self):
         self.dir = path.dirname(__file__)
@@ -114,7 +115,7 @@ class Game:
                                 elif self.last_moved_piece.type == "ROOK":
                                     coords = self.rook_to_king(king, self.last_moved_piece)
                                     coords.append(self.last_moved_piece.pos)
-
+                                self.king_attack_cells=coords
                                 for p in self.pieces:
                                     if p.color==king.color:
                                         new_possible_moves = []
@@ -135,15 +136,11 @@ class Game:
 
                         else:
                             if cell not in self.highlighted_cells:
-                                # self.selected_piece=self.selected_pieces[-1]
 
                                 if self.highlighted_cells:
                                     self.highlighted_cells=[] 
-                                # if len(self.selected_pieces)>1:
-                                #     self.selected_piece = self.selected_pieces[-2]
-                                
+
  
-                    print(self.selected_piece)  
                 for cell in self.highlighted_cells:
 
                     rect = pg.Rect(cell.x, cell.y, 60,60)
