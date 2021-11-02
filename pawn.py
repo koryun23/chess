@@ -17,7 +17,9 @@ class Pawn:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey((255, 255, 255))
         self.game.pieces.append(self)
+        self.attacked_cells = []
         self.possible_moves = self.get_possible_moves()
+
     def get_possible_moves(self):
         letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
         possible_moves = []
@@ -45,12 +47,13 @@ class Pawn:
             left = current_index-1
             if right >= 0 and right <8:
                 right_pos = letters[right]+str(int(self.pos[1])+1)
+                self.attacked_cells.append(right_pos)
                 right_piece = self.game.piece_on_coord(right_pos)
                 if right_piece and right_piece.color!=self.color:
                     possible_moves.append(right_pos)
             if left >= 0 and left<8:
                 left_pos = letters[left]+str(int(self.pos[1])+1)
-
+                self.attacked_cells.append(left_pos)
                 left_piece = self.game.piece_on_coord(left_pos)
                 if left_piece and left_piece.color!= self.color:
                     possible_moves.append(left_pos)
@@ -76,12 +79,13 @@ class Pawn:
             left = current_index-1
             if right >= 0 and right <8:
                 right_pos = letters[right]+str(int(self.pos[1])-1)
+                self.attacked_cells.append(right_pos)
                 right_piece = self.game.piece_on_coord(right_pos)
                 if right_piece and right_piece.color!=self.color:
                     possible_moves.append(right_pos)
             if left >= 0 and left<8:
                 left_pos = letters[left]+str(int(self.pos[1])-1)
-
+                self.attacked_cells.append(left_pos)
                 left_piece = self.game.piece_on_coord(left_pos)
                 if left_piece and left_piece.color!=self.color:
                     possible_moves.append(left_pos)

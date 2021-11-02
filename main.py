@@ -109,12 +109,16 @@ class Game:
                                 elif self.b_king.is_under_check:
                                     king = self.b_king
                                 if self.last_moved_piece.type=="BISHOP":
-
                                     coords = self.bishop_to_king(king, self.last_moved_piece)
                                     coords.append(self.last_moved_piece.pos)
                                 elif self.last_moved_piece.type == "ROOK":
                                     coords = self.rook_to_king(king, self.last_moved_piece)
                                     coords.append(self.last_moved_piece.pos)
+                                elif self.last_moved_piece.type=="QUEEN":
+                                    coords = self.queen_to_king(king, self.last_moved_piece)
+                                    coords.append(self.last_moved_piece.pos)
+                                elif self.last_moved_piece.type=="KNIGHT":
+                                    coords = [self.last_moved_piece.pos]
                                 self.king_attack_cells=coords
                                 for p in self.pieces:
                                     if p.color==king.color:
@@ -126,9 +130,6 @@ class Game:
 
                                         p.possible_moves = new_possible_moves
 
-                                for p in self.pieces:
-                                    if p.type=="KNIGHT" and p.pos == "b1":
-                                        break
                                 for move in piece.possible_moves:
                                     possible_cell = self.coord_to_cell(move)
                                     if possible_cell:
