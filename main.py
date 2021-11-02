@@ -110,8 +110,10 @@ class Game:
                                 if self.last_moved_piece.type=="BISHOP":
 
                                     coords = self.bishop_to_king(king, self.last_moved_piece)
+                                    coords.append(self.last_moved_piece.pos)
                                 elif self.last_moved_piece.type == "ROOK":
                                     coords = self.rook_to_king(king, self.last_moved_piece)
+                                    coords.append(self.last_moved_piece.pos)
 
                                 for p in self.pieces:
                                     if p.color==king.color:
@@ -119,6 +121,7 @@ class Game:
                                         for c in coords:
                                             if c in p.get_possible_moves():
                                                 new_possible_moves.append(c)
+
 
                                         p.possible_moves = new_possible_moves
 
