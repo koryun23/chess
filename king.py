@@ -48,7 +48,6 @@ class King:
                 piece_on_coord = self.game.piece_on_coord(coord)
                 if not (piece_on_coord and piece_on_coord.color == self.color):
                     possible_moves.append(coord)
-
                     for p in self.game.pieces:
                         if p.type!="KING":
                             if ((coord in p.possible_moves and p.type!="PAWN") or (p.type=="PAWN" and coord in p.attacked_cells)) and p.color!= self.color:

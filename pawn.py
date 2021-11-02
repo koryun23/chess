@@ -35,9 +35,29 @@ class Pawn:
                 else:
                     if possible_moves:
                         possible_moves.pop()
-
-                
-                
+            if self.pos[1] == "5":
+                for piece in self.game.pieces:
+                    if piece.type=="PAWN" and piece.color=="B" and piece.pos[1]=="5":
+                        index = letters.index(self.pos[0])
+                        right=-1
+                        left=-1
+                        if index ==0:
+                            right=index+1
+                        if index==len(letters)-1:
+                            left = index-1
+                        elif index >0 and index < len(letters):
+                            left = index-1
+                            right=index+1
+                        if right>0:
+                            if piece.pos[0] == letters[right] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
+                                x = "6"
+                                possible_moves.append(piece.pos[0]+"6")
+                        if left > 0:
+                            if piece.pos[0] == letters[left] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
+                                possible_moves.append(piece.pos[0]+"6")
+                coord =self.pos[0]+str(int(self.pos[1])+1)
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
             else:
                 coord =self.pos[0]+str(int(self.pos[1])+1)
                 if not self.game.piece_on_coord(coord):
@@ -70,6 +90,28 @@ class Pawn:
                 else:
                     if possible_moves:
                         possible_moves.pop()
+            elif self.pos[1] == "4":
+                for piece in self.game.pieces:
+                    if piece.type=="PAWN" and piece.color=="W" and piece.pos[1] == "4":
+                        index = letters.index(self.pos[0])
+                        right=-1
+                        left=-1
+                        if index ==0:
+                            right=index+1
+                        if index==len(letters)-1:
+                            left = index-1
+                        elif index >0 and index < len(letters):
+                            left = index-1
+                            right=index+1
+                        if right>0:
+                            if piece.pos[0] == letters[right] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
+                                possible_moves.append(piece.pos[0]+"3")
+                        if left >0:
+                            if piece.pos[0] == letters[left] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
+                                possible_moves.append(piece.pos[0]+"3")
+                coord = self.pos[0]+str(int(self.pos[1])-1)
+                if not self.game.piece_on_coord(coord):
+                    possible_moves.append(coord)
             else:
                 coord = self.pos[0]+str(int(self.pos[1])-1)
                 if not self.game.piece_on_coord(coord):
