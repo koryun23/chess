@@ -65,7 +65,7 @@ class King:
 
                     for p in self.game.pieces:
                         if (coords[0] in p.possible_moves or coords[1] in p.possible_moves) and p.color=="B":
-                            print("Cant castle")
+
 
                             possible_moves.pop()
                             break
@@ -105,7 +105,6 @@ class King:
                             possible_moves.pop()
                             break
 
-        # print(possible_moves)
         return possible_moves
     
 

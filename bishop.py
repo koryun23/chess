@@ -84,5 +84,4 @@ class Bishop:
             y+=1
             
 
-
         return possible_moves

@@ -37,6 +37,7 @@ class Game:
         self.rects = []
         self.highlighted_cells = []
         self.selected_piece = None
+        self.selected_pieces = [] #stack of the selected pieces
         self.turn = "W"
         self.load_data()
         self.load_pieces()
@@ -77,14 +78,14 @@ class Game:
                         piece = self.piece_on_coord(coord)
 
                         if piece and piece.color==self.turn:
-                            if piece.type=="KING":
-                                print(piece.color+" "+str(piece.is_under_check))
-                            # if not (piece.type=="KING" and piece.color=="W" and piece.is_under_check) and \
-                            #     not(piece.type=="KING" and piece.color=="B" and piece.is_under_check):
-                            if not self.w_king.is_under_check and not self.b_king.is_under_check:
+                           
+                            if (not self.w_king.is_under_check and not self.b_king.is_under_check) or \
+                                (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
+                                    (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
                                 if self.highlighted_cells:
                                     self.highlighted_cells=[]
                                 self.selected_piece = piece
+                                self.selected_pieces.append(self.selected_piece)
                                 self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
                                 for p in self.pieces:
                                     p.possible_moves = p.get_possible_moves()
@@ -98,11 +99,50 @@ class Game:
                                     if possible_cell:
                                         self.highlighted_cells.append(possible_cell)
                             else:
-                                pass
+                                
+                                if self.w_king.is_under_check:
+                                    king = self.w_king #e1
+
+                                elif self.b_king.is_under_check:
+                                    king = self.b_king
+                                if self.selected_pieces[-1].type=="BISHOP":
+                                    print(self.selected_piece.pos)
+                                    print(king.pos)
+                                    coords = self.bishop_to_king(king, self.selected_piece)
+                                elif self.selected_pieces[-1].type == "ROOK":
+                                    coords = self.rook_to_king(king, self.selected_piece)
+                                print(self.selected_pieces[-1].type)
+
+                                print("coords:",coords)
+                                for p in self.pieces:
+                                    if p.color==king.color:
+                                        new_possible_moves = []
+                                        for c in coords:
+                                            
+
+                                            if c in p.get_possible_moves():
+                                                new_possible_moves.append(c)
+                                        print("new possible moves ",new_possible_moves)
+                                        p.possible_moves = new_possible_moves
+
+                                for p in self.pieces:
+                                    if p.type=="KNIGHT" and p.pos == "b1":
+                                        print(p.possible_moves)
+                                        break
+                                for move in piece.possible_moves:
+                                    possible_cell = self.coord_to_cell(move)
+                                    if possible_cell:
+                                        self.highlighted_cells.append(possible_cell)
+
                         else:
                             if cell not in self.highlighted_cells:
+                                self.selected_piece=self.selected_pieces[-1]
                                 if self.highlighted_cells:
-                                    self.highlighted_cells=[]     
+                                    self.highlighted_cells=[] 
+                                # if len(self.selected_pieces)>1:
+                                #     self.selected_piece = self.selected_pieces[-2]
+                                
+                                print(self.selected_piece.type)    
                 for cell in self.highlighted_cells:
 
                     rect = pg.Rect(cell.x, cell.y, 60,60)
@@ -115,21 +155,35 @@ class Game:
                         coord = self.cell_to_coord(cell)
                         captured_piece = self.piece_on_coord(coord)
                         if captured_piece and captured_piece.color!=self.selected_piece.color:
-                            
                             self.pieces.remove(captured_piece)
                             captured_piece = None
+                        print(self.selected_piece)
                         self.selected_piece.pos = coord
-
                         self.highlighted_cells = []
-                        for piece in self.pieces:
-                            piece.possible_moves = piece.get_possible_moves()
+                        king = None
+                        if self.w_king.is_under_check:
+                            king=self.w_king
+                        if self.b_king.is_under_check:
+                            king=self.b_king
+                        if not king:
+                            for piece in self.pieces:
+                                piece.possible_moves = piece.get_possible_moves()
+                        else:
+                            for p in self.pieces:
+                                if p.color==king.color:
+                                    for coord in coords:
+                                        new_possible_moves = []
+                                        if coord in p.possible_moves:
+                                            new_possible_moves.append(coord)
+                                        p.possible_moves = new_possible_moves
+                                        print(p.possible_moves)
                         for piece in self.pieces:
                             if piece.color=="W" and self.b_king.pos in piece.possible_moves:
                                 self.b_king.is_under_check=True
-                                print("CHECK")
+
                             elif piece.color=="B" and self.w_king.pos in piece.possible_moves:
                                 self.w_king.is_under_check = True
-                                print("CHECK")
+
 
                         if self.selected_piece.type=="KING":
                             if self.selected_piece.color=="W":
@@ -143,9 +197,9 @@ class Game:
                                     else:
                                         self.w_king.moved=True
                             else:
-                                print(self.b_king.moved)
+
                                 if self.b_king.moved==False:
-                                    print(coord)
+
                                     if coord=="g8":
                                         self.b_rook2.pos="f8"
                                         self.b_king.moved= True
@@ -156,8 +210,68 @@ class Game:
                                         self.b_king.moved=True
                         elif self.selected_piece.type=="ROOK":
                             self.selected_piece.moved=True
+    def rook_to_king(self, king, piece):
+            king_pos = king.pos
+            coords = []
+            letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+        # if piece.type=="ROOK":
+            if piece.pos[0] == king_pos[0]:
+                if int(piece.pos[1]) > int(king_pos[1]):
+                    for i in range(int(king_pos[1]),int(piece.pos[1]),1):
+                        coords.append(king_pos[0]+str(i))
+                else:
+                    for i in range(int(piece.pos[1]), int(king_pos[1]), 1):
+                        coords.append(piece.pos+str(i))
+            else:
+                if letters.index(king_pos[0]) > letters.index(piece.pos[0]):
+                    start = letters.index(piece.pos[0])
+                    end = letters.index(king_pos[0])
+                else:
+                    start = letters.index(king_pos[0])
+                    end = letters.index(piece.pos[0])
+                for i in range(start+1,end):
+                    coords.append(letters[i]+str(king_pos[1]))
 
-                            
+            return coords
+    def bishop_to_king(self, king, piece):
+            
+            king_pos = king.pos
+            #bishop - b4
+            #king - e1
+            coords = []
+            letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+            bishop_y = letters.index(piece.pos[0])
+            bishop_x = int(piece.pos[1])
+            king_y = letters.index(king_pos[0])
+            king_x = int(king_pos[1])
+            if bishop_y< king_y:
+                diff_y=1
+            else:
+                diff_y=-1
+            if bishop_x<king_x:
+                diff_x=1
+            else:
+                diff_x=-1
+            coord = piece.pos
+            y=bishop_y#4
+            x = bishop_x#1
+            while coord!=king_pos:
+
+                coord =letters[y]+str(x)
+                if coord==king_pos:
+                    return coords
+                if coord!=piece.pos:
+                    coords.append(coord)
+                x+=diff_x
+                y+=diff_y
+
+    def queen_to_king(self, king, piece):
+        r = Rook(self, piece.color, piece.pos)
+        self.pieces.pop()
+        b = Bishop(self, piece.color, piece.pos)
+        self.pieces.pop()
+        return self.rook_to_king(self, king, r)+self.bishop_to_king(self, king, b)
+        
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             return True
@@ -204,7 +318,11 @@ class Game:
         #create kings
         self.w_king = King(self, "W","e1")
         self.b_king = King(self, "B", "e8")
-
+        #create knights
+        self.w_knight1 = Knight(self, "W", "b1")
+        self.w_knight2 = Knight(self, "W", "g1")
+        self.b_knight1 = Knight(self, "B", "b8")
+        self.b_knight2 = Knight(self, "B", "g8")
         #create queens
         self.w_queen = Queen(self, "W", "d1")
         self.b_queen = Queen(self, "B", "d8")
@@ -221,11 +339,7 @@ class Game:
         self.b_bishop1 = Bishop(self, "B", "c8")
         self.b_bishop2 = Bishop(self, "B", "f8")
 
-        #create knights
-        self.w_knight1 = Knight(self, "W", "b1")
-        self.w_knight2 = Knight(self, "W", "g1")
-        self.b_knight1 = Knight(self, "B", "b8")
-        self.b_knight2 = Knight(self, "B", "g8")
+
         #create pawns
         for i in range(8):
             self.w_pawn = Pawn(self, "W", self.d[i]+"2")
