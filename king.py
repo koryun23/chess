@@ -54,7 +54,7 @@ class King:
                                 possible_moves.pop()
                                 break
 
-        if self.color == "W" and self.pos=="e1" and not self.moved:
+        if self.color == "W" and self.pos=="e1" and not self.moved and not self.is_under_check:
             if not self.game.piece_on_coord("f1") and not self.game.piece_on_coord("g1"):
                 piece = self.game.piece_on_coord("h1")
                 if piece and piece.type=="ROOK" and piece.moved==False:
@@ -82,7 +82,7 @@ class King:
                             break
 
 
-        if self.color=="B" and self.pos == "e8" and not self.moved:
+        if self.color=="B" and self.pos == "e8" and not self.moved and not self.is_under_check:
             if not self.game.piece_on_coord("f8") and not self.game.piece_on_coord("g8"):
                 piece = self.game.piece_on_coord("h8")
 
