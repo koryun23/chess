@@ -110,27 +110,43 @@ class Game:
 
                                 elif self.b_king.is_under_check:
                                     king = self.b_king
+                                coords = []
+                                checking_pieces = 0
+                                for p in self.pieces:
+                                    if p.color!=king.color:
+                                        if king.pos in p.get_possible_moves():
+                                            checking_pieces+=1
+
                                 if self.last_moved_piece.type=="BISHOP":
-                                    coords = self.bishop_to_king(king, self.last_moved_piece)
-                                    coords.append(self.last_moved_piece.pos)
+                                    b_coords = self.bishop_to_king(king, self.last_moved_piece)
+                                    b_coords.append(self.last_moved_piece.pos)
+                                    coords+=b_coords
                                 elif self.last_moved_piece.type == "ROOK":
-                                    coords = self.rook_to_king(king, self.last_moved_piece)
-                                    coords.append(self.last_moved_piece.pos)
+                                    r_coords = self.rook_to_king(king, self.last_moved_piece)
+                                    r_coords.append(self.last_moved_piece.pos)
+                                    coords+=r_coords
                                 elif self.last_moved_piece.type=="QUEEN":
-                                    coords = self.queen_to_king(king, self.last_moved_piece)
-                                    coords.append(self.last_moved_piece.pos)
+                                    q_coords = self.queen_to_king(king, self.last_moved_piece)
+                                    q_coords.append(self.last_moved_piece.pos)
+                                    coords+=q_coords
+
                                 elif self.last_moved_piece.type=="KNIGHT":
-                                    coords = [self.last_moved_piece.pos]
+                                    k_coords = [self.last_moved_piece.pos]
+                                    coords+=k_coords
+                                # coords = b_coords+r_coords+q_coords+k_coords
                                 self.king_attack_cells=coords
+
+                                index=0
                                 for p in self.pieces:
                                     if p.color==king.color:
-                                        new_possible_moves = []
-                                        for c in coords:
-                                            if c in p.get_possible_moves():
-                                                new_possible_moves.append(c)
-
-
-                                        p.possible_moves = new_possible_moves
+                                        if checking_pieces==1:
+                                            new_possible_moves = []
+                                            for c in coords:
+                                                if c in p.get_possible_moves():
+                                                    new_possible_moves.append(c)
+                                            p.possible_moves = new_possible_moves
+                                        else:
+                                            p.possible_moves = []
 
                                 for move in piece.possible_moves:
                                     possible_cell = self.coord_to_cell(move)
@@ -246,7 +262,7 @@ class Game:
 
             return coords
     def bishop_to_king(self, king, piece):
-
+            print(king.pos, piece.pos)
             king_pos = king.pos
             #bishop - b4
             #king - e1
@@ -282,7 +298,7 @@ class Game:
         self.pieces.pop()
         b = Bishop(self, piece.color, piece.pos)
         self.pieces.pop()
-        return self.rook_to_king(self, king, r)+self.bishop_to_king(self, king, b)
+        return self.rook_to_king(king, r)+self.bishop_to_king(king, b)
         
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
