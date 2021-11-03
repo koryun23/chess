@@ -85,3 +85,40 @@ class Bishop:
             
 
         return possible_moves
+
+    def coords_to_king(self):
+        # print(king.pos, piece.pos)
+        if self.color=="W":
+            king = self.game.b_king
+
+        else:
+            king=self.game.w_king
+        piece = self
+        king_pos = king.pos
+        #bishop - b4
+        #king - e1
+        coords = []
+        letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+        bishop_y = letters.index(piece.pos[0])
+        bishop_x = int(piece.pos[1])
+        king_y = letters.index(king_pos[0])
+        king_x = int(king_pos[1])
+        if bishop_y< king_y:
+            diff_y=1
+        else:
+            diff_y=-1
+        if bishop_x<king_x:
+            diff_x=1
+        else:
+            diff_x=-1
+        coord = piece.pos
+        y=bishop_y#4
+        x = bishop_x#1
+        while coord!=king_pos:
+            coord =letters[y]+str(x)
+            if coord==king_pos:
+                return coords
+            if coord!=piece.pos:
+                coords.append(coord)
+            x+=diff_x
+            y+=diff_y
