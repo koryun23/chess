@@ -1,6 +1,5 @@
 import pygame as pg
 from os import path
-
 from pygame.constants import MOUSEBUTTONDOWN
 from chess_board import *
 from king import King
@@ -80,7 +79,7 @@ class Game:
                         piece = self.piece_on_coord(coord)
 
                         if piece and piece.color==self.turn:
-                           
+                            
                             if (not self.w_king.is_under_check and not self.b_king.is_under_check) or \
                                 (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
                                     (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
@@ -88,6 +87,9 @@ class Game:
                                     self.highlighted_cells=[]
                                 self.selected_piece = piece
                                 self.selected_pieces.append(self.selected_piece)
+                                if self.selected_piece.type=="PAWN":
+                                    self.selected_piece.last_pos = self.selected_piece.pos
+                            
                                 self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
                                 for p in self.pieces:
                                     p.possible_moves = p.get_possible_moves()
@@ -152,10 +154,18 @@ class Game:
                             self.turn="W"
 
                         coord = self.cell_to_coord(cell)
+
                         captured_piece = self.piece_on_coord(coord)
                         if captured_piece and captured_piece.color!=self.selected_piece.color:
                             self.pieces.remove(captured_piece)
                             captured_piece = None
+                        elif not captured_piece:
+                            
+                            if self.selected_piece.type=="PAWN":
+                                if coord[0] != self.selected_piece.pos[0]:
+                                    captured_piece=self.piece_on_coord(coord[0]+self.selected_piece.pos[1])
+                                    self.pieces.remove(captured_piece)
+                                    captured_piece=None
 
                         # self.selected_piece=piece
                         self.selected_piece.pos = coord

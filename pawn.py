@@ -18,6 +18,7 @@ class Pawn:
         self.image.set_colorkey((255, 255, 255))
         self.game.pieces.append(self)
         self.attacked_cells = []
+        self.last_pos=self.pos
         self.possible_moves = self.get_possible_moves()
 
     def get_possible_moves(self):
@@ -50,11 +51,14 @@ class Pawn:
                             right=index+1
                         if right>0:
                             if piece.pos[0] == letters[right] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
-                                x = "6"
-                                possible_moves.append(piece.pos[0]+"6")
+                                if piece.last_pos==piece.pos[0]+"7":
+
+                                    possible_moves.append(piece.pos[0]+"6")
                         if left > 0:
                             if piece.pos[0] == letters[left] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
-                                possible_moves.append(piece.pos[0]+"6")
+                                if piece.last_pos == piece.pos[0]+"7":
+
+                                    possible_moves.append(piece.pos[0]+"6")
                 coord =self.pos[0]+str(int(self.pos[1])+1)
                 if not self.game.piece_on_coord(coord):
                     possible_moves.append(coord)
@@ -105,10 +109,12 @@ class Pawn:
                             right=index+1
                         if right>0:
                             if piece.pos[0] == letters[right] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
-                                possible_moves.append(piece.pos[0]+"3")
+                                if piece.last_pos == piece.pos[0]+"2":
+                                    possible_moves.append(piece.pos[0]+"3")
                         if left >0:
                             if piece.pos[0] == letters[left] and (self.game.last_moved_piece.pos==piece.pos and self.game.last_moved_piece.color==piece.color and self.game.last_moved_piece.type==piece.type):
-                                possible_moves.append(piece.pos[0]+"3")
+                                if piece.last_pos == piece.pos[0]+"2":
+                                    possible_moves.append(piece.pos[0]+"3")
                 coord = self.pos[0]+str(int(self.pos[1])-1)
                 if not self.game.piece_on_coord(coord):
                     possible_moves.append(coord)
