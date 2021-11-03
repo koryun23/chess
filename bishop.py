@@ -122,3 +122,19 @@ class Bishop:
                 coords.append(coord)
             x+=diff_x
             y+=diff_y
+    def is_pinned(self):
+        coords=[]
+        for p in self.game.pieces:
+            if p.color!=self.color:
+
+                if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
+                    if self.pos in p.get_possible_moves():
+                        b_coords = p.coords_to_king()
+                        for bc in b_coords:
+                            coords.append(bc)
+        for coord in coords:
+            piece = self.game.piece_on_coord(coord)
+            if piece:
+                if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
+                    return True
+        return False

@@ -106,5 +106,3 @@ class King:
                             break
 
         return possible_moves
-    
-

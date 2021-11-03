@@ -53,42 +53,14 @@ class Knight:
         coords=[]
         for p in self.game.pieces:
             if p.color!=self.color:
-                if self.color=="W":
-                    king=self.game.w_king
-                else:
-                    king=self.game.b_king
 
-                if p.type=="BISHOP":
+                if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
                     if self.pos in p.get_possible_moves():
                         b_coords = p.coords_to_king()
                         for bc in b_coords:
                             coords.append(bc)
-
-                # elif p.type=="ROOK":
-
-                #     if self.pos in p.get_possible_moves():
-                #         r_coords = self.game.rook_to_king(king, p)
-                #         for rc in r_coords:
-                #             coords.append(rc)
-                # elif p.type=="QUEEN":
-
-                #     if self.pos in p.get_possible_moves():
-                #         q_coords = self.game.queen_to_king(king, p)
-                #         for qc in q_coords:
-
-                #             coords.append(qc)
-
-
-        if self.game.piece_on_coord("b4"):
-            print("There is a bishop on b4")
-        else:
-            print("There is no bishop")
-        print(coords, self.pos)
         for coord in coords:
-            if self.pos=="c3" or self.pos=="b1":
-                print(coord)
             piece = self.game.piece_on_coord(coord)
             if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
                 return True
         return False
-                

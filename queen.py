@@ -28,3 +28,25 @@ class Queen:
         b = Bishop(self.game, self.color, self.pos)
         self.game.pieces.pop()
         return r.get_possible_moves()+b.get_possible_moves()
+    def is_pinned(self):
+        coords=[]
+        for p in self.game.pieces:
+            if p.color!=self.color:
+
+                if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
+                    if self.pos in p.get_possible_moves():
+                        b_coords = p.coords_to_king()
+                        for bc in b_coords:
+                            coords.append(bc)
+        for coord in coords:
+            piece = self.game.piece_on_coord(coord)
+            if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
+                return True
+        return False
+    def coords_to_king(self):
+        r = Rook(self.game, self.color, self.pos)
+        self.game.pieces.pop()
+        b = Bishop(self.game, self.color, self.pos)
+        self.game.pieces.pop()
+        return r.coords_to_king()+b.coords_to_king()
+        

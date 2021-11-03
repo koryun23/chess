@@ -90,12 +90,23 @@ class Game:
                                 self.selected_pieces.append(self.selected_piece)
                                 if self.selected_piece.type=="PAWN":
                                     self.selected_piece.last_pos = self.selected_piece.pos
-                                if self.selected_piece.type=="KNIGHT":
-                                    if self.selected_piece.is_pinned():
-                                        self.selected_piece.possible_moves = []
-                                    else:
-                                        self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
+                                if self.selected_piece.is_pinned():
+                                    coords=[]
+                                    for p in self.pieces:
+                                        if p.color!=self.selected_piece.color:
 
+                                            if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
+                                                if self.selected_piece.pos in p.get_possible_moves():
+                                                    b_coords = p.coords_to_king()
+                                                    coords+=b_coords
+                                                    coords.append(p.pos)
+                                    new_possible_moves=[]
+                                    for coord in coords:
+                                        if coord in self.selected_piece.get_possible_moves():
+                                            new_possible_moves.append(coord)
+                                    self.selected_piece.possible_moves = new_possible_moves
+                                else:
+                                    self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
                                 for p in self.pieces:
                                     if p.color=="W" and self.b_king.pos in p.possible_moves:
                                         self.b_king.is_under_check=True
@@ -267,6 +278,7 @@ class Game:
                     coords.append(letters[i]+str(king_pos[1]))
 
             return coords
+    
     def bishop_to_king(self, king, piece):
             # print(king.pos, piece.pos)
             king_pos = king.pos
