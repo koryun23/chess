@@ -51,4 +51,15 @@ class Queen:
         b = Bishop(self.game, self.color, self.pos)
         self.game.pieces.pop()
         return r.coords_to_king()+b.coords_to_king()
+    def is_protected(self):
+        self.game.pieces.remove(self)
+        for p in self.game.pieces:
+            if p.color==self.color:
+                p.get_possible_moves()
+
+                if (p.type!="PAWN" and self.pos in p.get_possible_moves()) or (p.type=="PAWN" and self.pos in p.attacked_cells):
+                    self.game.pieces.append(self)
+                    return True
+        self.game.pieces.append(self)
+        return False
         

@@ -47,13 +47,21 @@ class King:
             if current_x>=0 and current_x <= 7 and current_y >=1 and current_y<=8:
                 coord = str(letters[current_x])+str(current_y)
                 piece_on_coord = self.game.piece_on_coord(coord)
-                if not (piece_on_coord and piece_on_coord.color == self.color):
+                if piece_on_coord:
+                    if piece_on_coord.color != self.color:
+                        possible_moves.append(coord)
+                        if piece_on_coord.is_protected():
+                            if possible_moves:
+                                possible_moves.pop()
+                                
+                else:
                     possible_moves.append(coord)
                     for p in self.game.pieces:
-                        if p.type!="KING":
+                        if p.color!= self.color:
                             if ((coord in p.possible_moves and p.type!="PAWN") or (p.type=="PAWN" and coord in p.attacked_cells)) and p.color!= self.color:
-                                possible_moves.pop()
-                                break
+                                if possible_moves:
+                                    possible_moves.pop()
+                                
 
         if self.color == "W" and self.pos=="e1" and not self.moved and not self.is_under_check:
             if not self.game.piece_on_coord("f1") and not self.game.piece_on_coord("g1"):

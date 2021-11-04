@@ -80,9 +80,9 @@ class Game:
 
                         if piece and piece.color==self.turn:
                             
-                            if (not self.w_king.is_under_check and not self.b_king.is_under_check):
-                                # (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
-                                #     (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
+                            if (not self.w_king.is_under_check and not self.b_king.is_under_check) or \
+                                (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
+                                    (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
                                 if self.highlighted_cells:
                                     self.highlighted_cells=[]
                                 
@@ -90,8 +90,9 @@ class Game:
                                 self.selected_pieces.append(self.selected_piece)
                                 if self.selected_piece.type=="PAWN":
                                     self.selected_piece.last_pos = self.selected_piece.pos
-                                
+
                                 if self.selected_piece.type!="KING" and self.selected_piece.is_pinned():
+                                    print("is actually pinned")
                                     coords=[]
                                     for p in self.pieces:
                                         if p.color!=self.selected_piece.color:
@@ -103,13 +104,12 @@ class Game:
                                                     coords.append(p.pos)
 
 
-
+                                    print(f"coords: {coords}")
                                     new_possible_moves=[]
                                     for coord in coords:
                                         if coord in self.selected_piece.get_possible_moves():
-                                            new_possible_moves.append(coord)
+                                            new_possible_moves.append(coord)                                    
                                     self.selected_piece.possible_moves = new_possible_moves
-                                    
                                     for coord in coords:
                                         for p in self.pieces:
                                             if p.pos==coord and p.color==self.selected_piece.color and p.pos!=self.selected_piece.pos:
@@ -133,37 +133,36 @@ class Game:
                                 #     self.highlighted_cells=[]
                             else:
                                 self.selected_piece = piece
+
                                 self.selected_pieces.append(self.selected_piece)
+                                if self.highlighted_cells:
+                                    self.highlighted_cells=[]
                                 if self.w_king.is_under_check:
                                     king = self.w_king #e1
 
                                 elif self.b_king.is_under_check:
                                     king = self.b_king
+                                king.possible_moves = king.get_possible_moves()
+
                                 coords = []
                                 checking_pieces = 0
                                 for p in self.pieces:
                                     if p.color!=king.color:
-                                        if king.pos in p.get_possible_moves():
+                                        p.possible_moves = p.get_possible_moves()
+                                        if (p.type!="PAWN" and king.pos in p.get_possible_moves()) or (p.type=="PAWN" and king.pos in p.attacked_cells):
                                             checking_pieces+=1
-                                
-                                if self.last_moved_piece.type=="BISHOP":
-                                    b_coords = self.bishop_to_king(king, self.last_moved_piece)
-                                    b_coords.append(self.last_moved_piece.pos)
-                                    coords+=b_coords
-                                elif self.last_moved_piece.type == "ROOK":
-                                    r_coords = self.rook_to_king(king, self.last_moved_piece)
-                                    r_coords.append(self.last_moved_piece.pos)
-                                    coords+=r_coords
-                                elif self.last_moved_piece.type=="QUEEN":
-                                    q_coords = self.queen_to_king(king, self.last_moved_piece)
-                                    q_coords.append(self.last_moved_piece.pos)
-                                    coords+=q_coords
 
-                                elif self.last_moved_piece.type=="KNIGHT":
-                                    k_coords = [self.last_moved_piece.pos]
-                                    coords+=k_coords
+                               
+                                coords = []
+                                for p in self.pieces:
+                                    if p.color!=king.color:
+                                        if (p.type!="PAWN" and king.pos in p.get_possible_moves()):
+                                            coords+=p.coords_to_king()
+                                        elif p.type=="PAWN" and king.pos in p.attacked_cells:
+                                            if p.is_protected() == False:
+                                                coords.append(p.pos)
 
-                                # self.king_attack_cells=coords
+
                                 for p in self.pieces:
                                     if p.color==king.color:
                                         if checking_pieces==1:
@@ -239,10 +238,11 @@ class Game:
                             piece.possible_moves = piece.get_possible_moves()
 
                         for piece in self.pieces:
-                            if piece.color=="W" and self.b_king.pos in piece.possible_moves:
+                            piece.possible_moves = piece.get_possible_moves()
+                            if piece.color=="W" and ((piece.type!="PAWN" and self.b_king.pos in piece.possible_moves) or (piece.type=="PAWN" and self.b_king.pos in piece.attacked_cells)):
                                 self.b_king.is_under_check=True
 
-                            elif piece.color=="B" and self.w_king.pos in piece.possible_moves:
+                            elif piece.color=="B" and ((piece.type!="PAWN" and self.w_king.pos in piece.possible_moves) or (piece.type=="PAWN" and self.w_king.pos in piece.attacked_cells)):
                                 self.w_king.is_under_check = True
 
 
@@ -271,8 +271,9 @@ class Game:
                                         self.b_king.moved=True
                         elif self.selected_piece.type=="ROOK":
                             self.selected_piece.moved=True
-                    print(f"White king is under check?{self.w_king.is_under_check}")
-                    print(f"Black king is under check?{self.b_king.is_under_check}")
+
+
+
 
     def rook_to_king(self, king, piece):
             king_pos = king.pos

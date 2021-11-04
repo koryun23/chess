@@ -19,7 +19,7 @@ class Rook:
         self.image.set_colorkey((255, 255, 255))
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
-
+        
     def get_possible_moves(self):
         letters =  ["a", "b", "c", "d", "e", "f", "g", "h"]
         possible_moves = []
@@ -122,4 +122,14 @@ class Rook:
                     coords.append(letters[i]+str(king_pos[1]))
 
             return coords
-    
+    def is_protected(self):
+        self.game.pieces.remove(self)
+        for p in self.game.pieces:
+            if p.color==self.color:
+                p.get_possible_moves()
+                if (p.type!="PAWN" and self.pos in p.get_possible_moves()) or (p.type=="PAWN" and self.pos in p.attacked_cells):
+                    self.game.pieces.append(self)
+                    return True
+        self.game.pieces.append(self)
+        return False
+        
