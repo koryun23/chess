@@ -8,7 +8,6 @@ from rook import Rook
 from bishop import Bishop
 from knight import Knight
 from pawn import Pawn
-
 FPS = 30
 WHITE = (255, 255, 255)
 board = get_board()
@@ -21,7 +20,6 @@ class Cell:
         self.rect =self.image.get_rect()
     def update(self):
         self.rect.topleft = (self.x, self.y)
-
 class Game:
     def __init__(self):
         pg.init()
@@ -42,11 +40,9 @@ class Game:
         self.load_data()
         self.load_pieces()
         self.king_attack_cells = []
-
     def load_data(self):
         self.dir = path.dirname(__file__)
         self.img_dir = path.join(self.dir, "img")
-
     def run(self):
         self.playing = True
         while self.playing:
@@ -55,12 +51,9 @@ class Game:
             self.update()
             self.draw()
     def new(self):
-
         self.run()
-
     def update(self):
         pass
-
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -68,35 +61,35 @@ class Game:
                     self.playing = False
                 self.running = False
             if (event.type == pg.MOUSEBUTTONDOWN and event.button==1):
-
                 mouse = pg.mouse.get_pos()
-
                 for cell in self.cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
-
                         coord = self.cell_to_coord(cell)
                         piece = self.piece_on_coord(coord)
 
                         if piece and piece.color==self.turn:
-                            
+
+                            # if (not self.w_king.is_under_check and not self.b_king.is_under_check):
+                                # (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
+                                #     (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
                             if (not self.w_king.is_under_check and not self.b_king.is_under_check) or \
                                 (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
                                     (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
                                 if self.highlighted_cells:
                                     self.highlighted_cells=[]
-                                
+
                                 self.selected_piece = piece
                                 self.selected_pieces.append(self.selected_piece)
                                 if self.selected_piece.type=="PAWN":
                                     self.selected_piece.last_pos = self.selected_piece.pos
+                                
 
                                 if self.selected_piece.type!="KING" and self.selected_piece.is_pinned():
 
                                     coords=[]
                                     for p in self.pieces:
                                         if p.color!=self.selected_piece.color:
-
                                             if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
                                                 if self.selected_piece.pos in p.get_possible_moves():
                                                     b_coords = p.coords_to_king()
@@ -106,14 +99,15 @@ class Game:
                                     new_possible_moves=[]
                                     for coord in coords:
                                         if coord in self.selected_piece.get_possible_moves():
-                                            new_possible_moves.append(coord)                                    
+                                            new_possible_moves.append(coord)
+                                
                                     self.selected_piece.possible_moves = new_possible_moves
+
                                     for coord in coords:
                                         for p in self.pieces:
                                             if p.pos==coord and p.color==self.selected_piece.color and p.pos!=self.selected_piece.pos:
                                                 p.possible_moves = p.get_possible_moves()
                                                 self.selected_piece.possible_moves = self.selected_piece.get_possible_moves()
-
                                 else:
                                     self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
                                 for p in self.pieces:
@@ -122,7 +116,6 @@ class Game:
                                     elif p.color=="B" and self.w_king.pos in p.possible_moves:
                                         self.w_king.is_under_check=True
                                 
-
                                 for move in piece.possible_moves:
                                     possible_cell = self.coord_to_cell(move)
                                     if possible_cell:
@@ -130,7 +123,6 @@ class Game:
                                 # if self.selected_piece.type=="KNIGHT" and self.selected_piece.is_pinned():
                                 #     self.highlighted_cells=[]
                             else:
-
                                 self.selected_piece = piece
 
                                 self.selected_pieces.append(self.selected_piece)
@@ -147,17 +139,33 @@ class Game:
                                 checking_pieces = 0
                                 for p in self.pieces:
                                     if p.color!=king.color:
-                                        p.possible_moves = p.get_possible_moves()
+                                        if king.pos in p.get_possible_moves():
+                                            p.possible_moves = p.get_possible_moves()
                                         if (p.type!="PAWN" and king.pos in p.get_possible_moves()) or (p.type=="PAWN" and king.pos in p.attacked_cells):
                                             checking_pieces+=1
 
-                               
-                                coords = []
+                                if self.last_moved_piece.type=="BISHOP":
+                                    b_coords = self.bishop_to_king(king, self.last_moved_piece)
+                                    b_coords.append(self.last_moved_piece.pos)
+                                    coords+=b_coords
+                                elif self.last_moved_piece.type == "ROOK":
+                                    r_coords = self.rook_to_king(king, self.last_moved_piece)
+                                    r_coords.append(self.last_moved_piece.pos)
+                                    coords+=r_coords
+                                elif self.last_moved_piece.type=="QUEEN":
+                                    q_coords = self.queen_to_king(king, self.last_moved_piece)
+                                    q_coords.append(self.last_moved_piece.pos)
+                                    coords+=q_coords
 
+                                elif self.last_moved_piece.type=="KNIGHT":
+                                    k_coords = [self.last_moved_piece.pos]
+                                    coords+=k_coords
+                                coords = []
                                 for p in self.pieces:
                                     if p.color!=king.color:
                                         if (p.type!="PAWN" and king.pos in p.get_possible_moves()):
                                             coords+=p.coords_to_king()
+                                            coords.append(p.pos)
                                         elif p.type=="PAWN" and king.pos in p.attacked_cells:
                                             if p.is_protected() == False:
                                                 coords.append(p.pos)
@@ -170,10 +178,10 @@ class Game:
                                             for c in coords:
                                                 if c in p.get_possible_moves():
                                                     new_possible_moves.append(c)
+                                            p.possible_moves = new_possible_moves
                                             if p.type=="KING":
+
                                                 p.possible_moves = p.get_possible_moves()
-                                            else:
-                                                p.possible_moves = new_possible_moves
                                         else:
                                             if p.type!="KING":
                                                 p.possible_moves = []
@@ -184,25 +192,19 @@ class Game:
                                     possible_cell = self.coord_to_cell(move)
                                     if possible_cell:
                                         self.highlighted_cells.append(possible_cell)
-
                         else:
                             if cell not in self.highlighted_cells:
-
                                 if self.highlighted_cells:
                                     self.highlighted_cells=[] 
-
  
                 for cell in self.highlighted_cells:
-
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
                         if self.turn=="W":
                             self.turn="B"
                         else:
                             self.turn="W"
-
                         coord = self.cell_to_coord(cell)
-
                         captured_piece = self.piece_on_coord(coord)
                         if captured_piece and captured_piece.color!=self.selected_piece.color:
                             self.pieces.remove(captured_piece)
@@ -214,24 +216,37 @@ class Game:
                                     captured_piece=self.piece_on_coord(coord[0]+self.selected_piece.pos[1])
                                     self.pieces.remove(captured_piece)
                                     captured_piece=None
-                                    self.selected_piece.pos = coord
-                                    self.selected_piece.possible_moves = self.selected_piece.get_possible_moves()
-
                         # self.selected_piece=piece
                         self.selected_piece.pos = coord
                         self.last_moved_piece = self.selected_piece
                         self.highlighted_cells = []
-
+                        w_king_under_check = False
+                        b_king_under_check = False
+                        if self.w_king.is_under_check:
+                            for p in self.pieces:
+                                if p.color=="B" and self.w_king.pos in p.get_possible_moves():
+                                    w_king_under_check=True
+                                    break
+                        self.w_king.is_under_check=w_king_under_check
+                        if self.b_king.is_under_check:
+                            for p in self.pieces:
+                                if p.color=="W" and self.b_king.pos in p.get_possible_moves():
+                                    b_king_under_check=True
+                                    break
+                        self.b_king.is_under_check=b_king_under_check
                         for piece in self.pieces:
                             piece.possible_moves = piece.get_possible_moves()
 
                         for piece in self.pieces:
-                            piece.possible_moves = piece.get_possible_moves()
+                            if piece.color=="W" and self.b_king.pos in piece.possible_moves:
+                                piece.possible_moves = piece.get_possible_moves()
                             if piece.color=="W" and ((piece.type!="PAWN" and self.b_king.pos in piece.possible_moves) or (piece.type=="PAWN" and self.b_king.pos in piece.attacked_cells)):
                                 self.b_king.is_under_check=True
 
+                            #elif piece.color=="B" and self.w_king.pos in piece.possible_moves:
                             elif piece.color=="B" and ((piece.type!="PAWN" and self.w_king.pos in piece.possible_moves) or (piece.type=="PAWN" and self.w_king.pos in piece.attacked_cells)):
                                 self.w_king.is_under_check = True
+
 
                         if self.selected_piece.type=="KING":
                             if self.selected_piece.color=="W":
@@ -245,9 +260,7 @@ class Game:
                                     else:
                                         self.w_king.moved=True
                             else:
-
                                 if self.b_king.moved==False:
-
                                     if coord=="g8":
                                         self.b_rook2.pos="f8"
                                         self.b_king.moved= True
@@ -258,6 +271,7 @@ class Game:
                                         self.b_king.moved=True
                         elif self.selected_piece.type=="ROOK":
                             self.selected_piece.moved=True
+
 
 
 
@@ -283,7 +297,6 @@ class Game:
                     end = letters.index(piece.pos[0])
                 for i in range(start+1,end):
                     coords.append(letters[i]+str(king_pos[1]))
-
             return coords
     
     def bishop_to_king(self, king, piece):
@@ -309,7 +322,6 @@ class Game:
             y=bishop_y#4
             x = bishop_x#1
             while coord[0]!=king_pos[0] and coord[1] !=king_pos[1]:
-
                 coord =letters[y]+str(x)
                 if coord==king_pos:
                     return coords
@@ -331,14 +343,12 @@ class Game:
         return False
     
     def draw(self):
-
         for i in range(8):
             for j in range(8):
                 if board[i][j] == "W":
                     cur_color = (255, 255, 255)
                 elif board[i][j] == "B":
                     cur_color =(165, 42, 42)
-
                 if len(self.cells)!=64:
                     cell = Cell(cur_color, j*60,i*60)
                     self.cells.append(cell)
@@ -357,14 +367,12 @@ class Game:
             pos = piece.pos
             index = self.coords.index(pos)
             cell = self.cells[index]
-
             rect = piece.image.get_rect()
             rect.topleft = (cell.x, cell.y)
             piece.cell = cell
             rect.x +=10
             rect.y+=10
             self.screen.blit(piece.image, rect)
-
         pg.display.flip()
         
     def load_pieces(self):
@@ -379,20 +387,16 @@ class Game:
         #create queens
         self.w_queen = Queen(self, "W", "d1")
         self.b_queen = Queen(self, "B", "d8")
-
         #create rooks
         self.w_rook1 = Rook(self, "W", "a1")
         self.w_rook2 = Rook(self, "W", "h1")
         self.b_rook1 = Rook(self, "B", "a8")
         self.b_rook2 = Rook(self, "B", "h8")
-
         #create bishops
         self.w_bishop1 = Bishop(self, "W", "c1")
         self.w_bishop2 = Bishop(self, "W", "f1")
         self.b_bishop1 = Bishop(self, "B", "c8")
         self.b_bishop2 = Bishop(self, "B", "f8")
-
-
         #create pawns
         for i in range(8):
             self.w_pawn = Pawn(self, "W", self.d[i]+"2")

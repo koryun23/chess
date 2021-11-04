@@ -57,14 +57,17 @@ class Knight:
                 if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
                     if self.pos in p.get_possible_moves():
                         b_coords = p.coords_to_king()
+                        b_coords.append(p.pos)
                         for bc in b_coords:
                             coords.append(bc)
-
-        for coord in coords:
-            piece = self.game.piece_on_coord(coord)
-            if piece:
-                if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
-                    return True
+                        
+        number_of_pieces = 0
+        for p in self.game.pieces:
+            for coord in coords:
+                if coord==p.pos and p.color==self.color:
+                    number_of_pieces+=1
+        if number_of_pieces==1:
+            return True
         return False
     def is_protected(self):
         self.game.pieces.remove(self)

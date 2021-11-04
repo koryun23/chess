@@ -86,22 +86,25 @@ class Rook:
                 if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
                     if self.pos in p.get_possible_moves():
                         b_coords = p.coords_to_king()
+                        b_coords.append(p.pos)
                         for bc in b_coords:
                             coords.append(bc)
-        for coord in coords:
-            piece = self.game.piece_on_coord(coord)
-            if piece:
-                if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
-                    return True
+        number_of_pieces = 0
+        for p in self.game.pieces:
+            for coord in coords:
+                if coord==p.pos and p.color==self.color:
+                    number_of_pieces+=1
+        if number_of_pieces==1:
+            return True
         return False
     def coords_to_king(self):
             # king_pos = king.pos
             coords = []
             letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
             if self.color=="W":
-                king_pos=self.game.w_king.pos
-            else:
                 king_pos=self.game.b_king.pos
+            else:
+                king_pos=self.game.w_king.pos
             piece = self
         # if piece.type=="ROOK":
             if piece.pos[0] == king_pos[0]:
