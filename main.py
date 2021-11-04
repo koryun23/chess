@@ -90,7 +90,8 @@ class Game:
                                 self.selected_pieces.append(self.selected_piece)
                                 if self.selected_piece.type=="PAWN":
                                     self.selected_piece.last_pos = self.selected_piece.pos
-                                if self.selected_piece.is_pinned():
+                                
+                                if self.selected_piece.type!="KING" and self.selected_piece.is_pinned():
                                     coords=[]
                                     for p in self.pieces:
                                         if p.color!=self.selected_piece.color:
@@ -100,11 +101,20 @@ class Game:
                                                     b_coords = p.coords_to_king()
                                                     coords+=b_coords
                                                     coords.append(p.pos)
+
+
+
                                     new_possible_moves=[]
                                     for coord in coords:
                                         if coord in self.selected_piece.get_possible_moves():
                                             new_possible_moves.append(coord)
                                     self.selected_piece.possible_moves = new_possible_moves
+                                    
+                                    for coord in coords:
+                                        for p in self.pieces:
+                                            if p.pos==coord and p.color==self.selected_piece.color and p.pos!=self.selected_piece.pos:
+                                                p.possible_moves = p.get_possible_moves()
+                                                self.selected_piece.possible_moves = self.selected_piece.get_possible_moves()
                                 else:
                                     self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
                                 for p in self.pieces:
