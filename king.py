@@ -49,18 +49,20 @@ class King:
                 piece_on_coord = self.game.piece_on_coord(coord)
                 if piece_on_coord:
                     if piece_on_coord.color != self.color:
-                        possible_moves.append(coord)
-                        if piece_on_coord.is_protected():
-                            if possible_moves:
-                                possible_moves.pop()
+                        if piece_on_coord.is_protected()==False:
+                            possible_moves.append(coord)
                                 
                 else:
-                    possible_moves.append(coord)
                     for p in self.game.pieces:
-                        if p.color!= self.color:
-                            if ((coord in p.possible_moves and p.type!="PAWN") or (p.type=="PAWN" and coord in p.attacked_cells)) and p.color!= self.color:
-                                if possible_moves:
-                                    possible_moves.pop()
+                        if self.color!= p.color:
+                            # if p.type=="KING":
+                            #     if p.color=="WHITE":
+                            #         p=self.game.w_king
+                            #     else:
+                            #         p=self.game.b_king
+                            if p.type!="KING" and not (p.type!="PAWN" and coord in p.possible_moves) and not (p.type=="PAWN" and coord in p.attacked_cells):
+                                possible_moves.append(coord)
+                                p.possible_moves = p.get_possible_moves()
                                 
 
         if self.color == "W" and self.pos=="e1" and not self.moved and not self.is_under_check:
