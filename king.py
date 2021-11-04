@@ -53,14 +53,27 @@ class King:
                             possible_moves.append(coord)
                                 
                 else:
-                    flag=False
+                    cell_under_attack=False
+                    # possible_moves.append(coord)
                     for p in self.game.pieces:
+
+                        
                         if self.color!= p.color and p.type!='KING':
-                            if (p.type!="PAWN" and coord in p.possible_moves) or (p.type=="PAWN" and coord in p.attacked_cells):
-                                flag=True
+                            if p.type=="PAWN":
+                                p.get_possible_moves()
+                                print(p.attacked_cells)
+                            if (coord in p.get_possible_moves() and p.type!="PAWN") or (p.type=="PAWN" and coord in p.attacked_cells):
+                            #     # if possible_moves[-1]==coord:
+                            #     possible_moves.pop()
+                            #     break
+                                cell_under_attack=True
                                 break
-                    if not flag:
+                    if not cell_under_attack:
                         possible_moves.append(coord)
+                    cell_under_attack=False
+                                
+                    #if not cell_under_attack:
+                    # possible_moves.append(coord)
                     
 
                             
