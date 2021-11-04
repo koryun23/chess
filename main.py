@@ -80,9 +80,9 @@ class Game:
 
                         if piece and piece.color==self.turn:
                             
-                            if (not self.w_king.is_under_check and not self.b_king.is_under_check) or \
-                                (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
-                                    (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
+                            if (not self.w_king.is_under_check and not self.b_king.is_under_check):
+                                # (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
+                                #     (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
                                 if self.highlighted_cells:
                                     self.highlighted_cells=[]
                                 
@@ -115,6 +115,7 @@ class Game:
                                             if p.pos==coord and p.color==self.selected_piece.color and p.pos!=self.selected_piece.pos:
                                                 p.possible_moves = p.get_possible_moves()
                                                 self.selected_piece.possible_moves = self.selected_piece.get_possible_moves()
+
                                 else:
                                     self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
                                 for p in self.pieces:
@@ -144,7 +145,7 @@ class Game:
                                     if p.color!=king.color:
                                         if king.pos in p.get_possible_moves():
                                             checking_pieces+=1
-
+                                
                                 if self.last_moved_piece.type=="BISHOP":
                                     b_coords = self.bishop_to_king(king, self.last_moved_piece)
                                     b_coords.append(self.last_moved_piece.pos)
@@ -163,7 +164,6 @@ class Game:
                                     coords+=k_coords
 
                                 # self.king_attack_cells=coords
-
                                 for p in self.pieces:
                                     if p.color==king.color:
                                         if checking_pieces==1:
@@ -171,10 +171,16 @@ class Game:
                                             for c in coords:
                                                 if c in p.get_possible_moves():
                                                     new_possible_moves.append(c)
-                                            p.possible_moves = new_possible_moves
+                                            if p.type=="KING":
+                                                p.possible_moves = p.get_possible_moves()
+                                            else:
+                                                p.possible_moves = new_possible_moves
                                         else:
-                                            p.possible_moves = []
-                                checking_pieces=0
+                                            if p.type!="KING":
+                                                p.possible_moves = []
+                                            else:
+                                                p.possible_moves = p.get_possible_moves()
+                                # checking_pieces=0
                                 for move in piece.possible_moves:
                                     possible_cell = self.coord_to_cell(move)
                                     if possible_cell:
@@ -265,6 +271,9 @@ class Game:
                                         self.b_king.moved=True
                         elif self.selected_piece.type=="ROOK":
                             self.selected_piece.moved=True
+                    print(f"White king is under check?{self.w_king.is_under_check}")
+                    print(f"Black king is under check?{self.b_king.is_under_check}")
+
     def rook_to_king(self, king, piece):
             king_pos = king.pos
             coords = []
@@ -311,7 +320,7 @@ class Game:
             coord = piece.pos
             y=bishop_y#4
             x = bishop_x#1
-            while coord!=king_pos:
+            while coord[0]!=king_pos[0] and coord[1] !=king_pos[1]:
 
                 coord =letters[y]+str(x)
                 if coord==king_pos:
@@ -320,7 +329,7 @@ class Game:
                     coords.append(coord)
                 x+=diff_x
                 y+=diff_y
-
+            return []
     def queen_to_king(self, king, piece):
         r = Rook(self, piece.color, piece.pos)
         self.pieces.pop()

@@ -19,10 +19,10 @@ class Knight:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey((255, 255, 255))
         self.game.pieces.append(self)
-        self.pinned=self.is_pinned()
+
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
-        if not self.pinned:
+        if not self.is_pinned():
             possible_moves = []
             letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
             x = letters.index(self.pos[0])
@@ -52,6 +52,7 @@ class Knight:
     def is_pinned(self):
         coords=[]
         for p in self.game.pieces:
+
             if p.color!=self.color:
 
                 if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
@@ -59,8 +60,9 @@ class Knight:
                         b_coords = p.coords_to_king()
                         for bc in b_coords:
                             coords.append(bc)
-        for coord in coords:
-            piece = self.game.piece_on_coord(coord)
-            if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
-                return True
-        return False
+                    for coord in coords:
+                        piece = self.game.piece_on_coord(coord)
+                        if piece:
+                            if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
+                                return True
+                    return False

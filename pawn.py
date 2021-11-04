@@ -150,6 +150,7 @@ class Pawn:
                             coords.append(bc)
         for coord in coords:
             piece = self.game.piece_on_coord(coord)
-            if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
-                return True
+            if piece:
+                if self.type==piece.type and self.pos==piece.pos and self.color==piece.color:
+                    return True
         return False

@@ -20,6 +20,7 @@ class Bishop:
         self.game.pieces.append(self)
         # self.image.set_colorkey(WHITE)
         self.possible_moves = self.get_possible_moves()
+
     def get_possible_moves(self):
         possible_moves =[]
         letters =["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -112,16 +113,19 @@ class Bishop:
         else:
             diff_x=-1
         coord = piece.pos
-        y=bishop_y#4
+        y = bishop_y#4
         x = bishop_x#1
-        while coord!=king_pos:
-            coord =letters[y]+str(x)
+        while coord[0]!=king_pos[0] and coord[1] !=king_pos[1]:
+            if y >= 7:
+                break
+            coord = letters[y]+str(x)
             if coord==king_pos:
                 return coords
             if coord!=piece.pos:
                 coords.append(coord)
             x+=diff_x
             y+=diff_y
+        return []
     def is_pinned(self):
         coords=[]
         for p in self.game.pieces:
