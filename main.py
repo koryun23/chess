@@ -92,6 +92,7 @@ class Game:
                                                     b_coords = p.coords_to_king()
                                                     coords+=b_coords
                                                     coords.append(p.pos)
+                                            
 
                                     new_possible_moves=[]
                                     for coord in coords:
@@ -149,6 +150,8 @@ class Game:
                                             if p.type=="BISHOP" or p.type=="ROOK" or p.type=="QUEEN":
                                                 coords+=p.coords_to_king()
                                                 coords.append(p.pos)
+                                            elif p.type=="KNIGHT":
+                                                coords.append(p.pos)
                                         elif p.type=="PAWN" and king.pos in p.attacked_cells:
                                             if p.is_protected()==False:
                                                 coords.append(p.pos)
@@ -205,6 +208,10 @@ class Game:
                         if captured_piece and captured_piece.color!=self.selected_piece.color:
                             self.pieces.remove(captured_piece)
                             captured_piece = None
+                            if self.selected_piece.type=="PAWN":
+                                self.selected_piece.attacked_cells = set()
+                                # self.selected_piece.get_possible_moves()
+
                         elif not captured_piece:
                             
                             if self.selected_piece.type=="PAWN":

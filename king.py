@@ -31,11 +31,13 @@ class King:
         if self.is_under_check:
             checking_piece=None
             for p in self.game.pieces:
-                if p.color!=self.color and p.type!="KING" and p.type!="KNIGHT" and p.type!= "PAWN" and self.pos in p.possible_moves:
+                if p.color!=self.color and p.type!="KING" and p.type!="KNIGHT" and self.pos in p.possible_moves:
                     checking_piece = p
                     break
+                elif p.type=="PAWN":
+                    p.get_possible_moves()
             print(checking_piece)
-            if checking_piece:
+            if checking_piece and checking_piece.type!='PAWN':
                 current_turn = self.game.turn
                 index = self.game.pieces.index(self)
                 self.game.pieces.remove(self)
@@ -44,6 +46,8 @@ class King:
                 self.game.pieces.insert(index, self)
                 # checking_piece.possible_moves = checking_piece.get_possible_moves()
                 self.game.turn = current_turn
+            elif checking_piece:
+                checking_piece.possible_moves = checking_piece.get_possible_moves()
         letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
         possible_moves = []
         x = letters.index(self.pos[0])

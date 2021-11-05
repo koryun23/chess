@@ -80,4 +80,4 @@ class Knight:
                     return True
         self.game.pieces.append(self)
         return False
-        
+    
