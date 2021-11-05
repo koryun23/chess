@@ -63,16 +63,7 @@ class Queen:
             b = Bishop(self.game, self.color, self.pos)
             self.game.pieces.pop()
             return b.coords_to_king()
-        # r = Rook(self.game, self.color, self.pos)
-        # self.game.pieces.pop()
-        # b = Bishop(self.game, self.color, self.pos)
-        # self.game.pieces.pop()
-        # coords = []
-        # for c in r.coords_to_king():
-        #     coords.append(c)
-        # for c in b.coords_to_king():
-        #     coords.append(c)
-        # return coords
+
     def is_protected(self):
         self.game.pieces.remove(self)
         for p in self.game.pieces:

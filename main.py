@@ -62,7 +62,6 @@ class Game:
                 self.running = False
             if (event.type == pg.MOUSEBUTTONDOWN and event.button==1):
                 mouse = pg.mouse.get_pos()
-                print(self.turn)
                 for cell in self.cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
@@ -210,7 +209,6 @@ class Game:
                             captured_piece = None
                             if self.selected_piece.type=="PAWN":
                                 self.selected_piece.attacked_cells = set()
-                                # self.selected_piece.get_possible_moves()
 
                         elif not captured_piece:
                             

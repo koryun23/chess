@@ -36,7 +36,6 @@ class King:
                     break
                 elif p.type=="PAWN":
                     p.get_possible_moves()
-            print(checking_piece)
             if checking_piece and checking_piece.type!='PAWN':
                 current_turn = self.game.turn
                 index = self.game.pieces.index(self)
