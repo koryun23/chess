@@ -27,6 +27,23 @@ class King:
         self.game.pieces.append(self)
         self.possible_moves = self.get_possible_moves()
     def get_possible_moves(self):
+        checking_piece=None
+        if self.is_under_check:
+            checking_piece=None
+            for p in self.game.pieces:
+                if p.color!=self.color and p.type!="KING" and p.type!="KNIGHT" and p.type!= "PAWN" and self.pos in p.possible_moves:
+                    checking_piece = p
+                    break
+            print(checking_piece)
+            if checking_piece:
+                current_turn = self.game.turn
+                index = self.game.pieces.index(self)
+                self.game.pieces.remove(self)
+                
+                checking_piece.possible_moves = checking_piece.get_possible_moves()
+                self.game.pieces.insert(index, self)
+                # checking_piece.possible_moves = checking_piece.get_possible_moves()
+                self.game.turn = current_turn
         letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
         possible_moves = []
         x = letters.index(self.pos[0])
@@ -54,18 +71,13 @@ class King:
                                 
                 else:
                     cell_under_attack=False
-                    # possible_moves.append(coord)
                     for p in self.game.pieces:
-
-                        
                         if self.color!= p.color and p.type!='KING':
                             if p.type=="PAWN":
                                 p.get_possible_moves()
-                                print(p.attacked_cells)
-                            if (coord in p.get_possible_moves() and p.type!="PAWN") or (p.type=="PAWN" and coord in p.attacked_cells):
-                            #     # if possible_moves[-1]==coord:
-                            #     possible_moves.pop()
-                            #     break
+
+                            if (coord in p.possible_moves and p.type!="PAWN") or (p.type=="PAWN" and coord in p.attacked_cells):
+
                                 cell_under_attack=True
                                 break
                     if not cell_under_attack:
@@ -74,7 +86,6 @@ class King:
                                 
                     #if not cell_under_attack:
                     # possible_moves.append(coord)
-                    
 
                             
         if self.color == "W" and self.pos=="e1" and not self.moved and not self.is_under_check:

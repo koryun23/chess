@@ -50,16 +50,29 @@ class Queen:
             return True
         return False
     def coords_to_king(self):
-        r = Rook(self.game, self.color, self.pos)
-        self.game.pieces.pop()
-        b = Bishop(self.game, self.color, self.pos)
-        self.game.pieces.pop()
-        coords = []
-        for c in r.coords_to_king():
-            coords.append(c)
-        for c in b.coords_to_king():
-            coords.append(c)
-        return coords
+        if self.color=="W":
+            king = self.game.b_king
+
+        else:
+            king = self.game.w_king
+        if self.pos[0] == king.pos[0] or self.pos[1]==king.pos[1]:
+            r = Rook(self.game,self.color, self.pos)
+            self.game.pieces.pop()
+            return r.coords_to_king()
+        else:
+            b = Bishop(self.game, self.color, self.pos)
+            self.game.pieces.pop()
+            return b.coords_to_king()
+        # r = Rook(self.game, self.color, self.pos)
+        # self.game.pieces.pop()
+        # b = Bishop(self.game, self.color, self.pos)
+        # self.game.pieces.pop()
+        # coords = []
+        # for c in r.coords_to_king():
+        #     coords.append(c)
+        # for c in b.coords_to_king():
+        #     coords.append(c)
+        # return coords
     def is_protected(self):
         self.game.pieces.remove(self)
         for p in self.game.pieces:

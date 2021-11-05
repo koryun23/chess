@@ -17,7 +17,7 @@ class Pawn:
             self.image = pg.image.load(self.images[1])
         self.image.set_colorkey((255, 255, 255))
         self.game.pieces.append(self)
-        self.attacked_cells = []
+        self.attacked_cells = set()
         self.last_pos=self.pos
         self.possible_moves = self.get_possible_moves()
 
@@ -71,13 +71,13 @@ class Pawn:
             left = current_index-1
             if right >= 0 and right <8:
                 right_pos = letters[right]+str(int(self.pos[1])+1)
-                self.attacked_cells.append(right_pos)
+                self.attacked_cells.add(right_pos)
                 right_piece = self.game.piece_on_coord(right_pos)
                 if right_piece and right_piece.color!=self.color:
                     possible_moves.append(right_pos)
             if left >= 0 and left<8:
                 left_pos = letters[left]+str(int(self.pos[1])+1)
-                self.attacked_cells.append(left_pos)
+                self.attacked_cells.add(left_pos)
                 left_piece = self.game.piece_on_coord(left_pos)
                 if left_piece and left_piece.color!= self.color:
                     possible_moves.append(left_pos)
@@ -127,13 +127,13 @@ class Pawn:
             left = current_index-1
             if right >= 0 and right <8:
                 right_pos = letters[right]+str(int(self.pos[1])-1)
-                self.attacked_cells.append(right_pos)
+                self.attacked_cells.add(right_pos)
                 right_piece = self.game.piece_on_coord(right_pos)
                 if right_piece and right_piece.color!=self.color:
                     possible_moves.append(right_pos)
             if left >= 0 and left<8:
                 left_pos = letters[left]+str(int(self.pos[1])-1)
-                self.attacked_cells.append(left_pos)
+                self.attacked_cells.add(left_pos)
                 left_piece = self.game.piece_on_coord(left_pos)
                 if left_piece and left_piece.color!=self.color:
                     possible_moves.append(left_pos)
@@ -145,9 +145,15 @@ class Pawn:
 
                 if p.type!='KNIGHT' and p.type!="KING" and p.type!="PAWN":
                     if self.pos in p.get_possible_moves():
+
                         b_coords = p.coords_to_king()
                         b_coords.append(p.pos)
+                        if (p.type=="QUEEN" or p.type=="ROOK") and p.pos[0] == self.pos[0]:
+                            print("YEEES")
+                            continue
                         for bc in b_coords:
+                            if len(bc)==3:
+                                bc = bc[0]+bc[2]
                             coords.append(bc)
 
         number_of_pieces = 0
@@ -155,8 +161,12 @@ class Pawn:
             for coord in coords:
                 if coord==p.pos and p.color==self.color:
                     number_of_pieces+=1
+                    print(p.type, p.pos)
         if number_of_pieces==1:
+
             return True
+        if self.pos[0]=="e":
+            print(coords)
         return False
     def is_protected(self):
         self.game.pieces.remove(self)

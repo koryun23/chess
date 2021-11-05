@@ -90,11 +90,12 @@ class Bishop:
     def coords_to_king(self):
         if self.color=="W":
             king = self.game.b_king
-
         else:
             king=self.game.w_king
         piece = self
         king_pos = king.pos
+        if king_pos[0] == self.pos[0] or king_pos[1]==self.pos[1]:
+            return []
         #bishop - b4
         #king - e1
         coords = []

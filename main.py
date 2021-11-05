@@ -62,6 +62,7 @@ class Game:
                 self.running = False
             if (event.type == pg.MOUSEBUTTONDOWN and event.button==1):
                 mouse = pg.mouse.get_pos()
+                print(self.turn)
                 for cell in self.cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
@@ -140,7 +141,7 @@ class Game:
                                         if (p.type!="PAWN" and king.pos in p.get_possible_moves()) or (p.type=="PAWN" and king.pos in p.attacked_cells):
                                             checking_pieces+=1
 
-                                print(checking_pieces)
+
                                 coords = []
                                 for p in self.pieces:
                                     if p.color!=king.color:
@@ -156,7 +157,6 @@ class Game:
                                             if king.pos in p.get_possible_moves():
                                                 coords.append(p.pos)
 
-                                print(coords)
                                 for p in self.pieces:
                                     if p.color==king.color:
                                         if checking_pieces==1:
@@ -178,21 +178,6 @@ class Game:
                                                             if not (p.type!="PAWN" and c in p.possible_moves) and not (p.type=="PAWN" and c in p.attacked_cells):
                                                                 new_possible_moves.append(c)
                                                 p.possible_moves = new_possible_moves
-
-                                            # else:
-                                            #     p.possible_moves = p.get_possible_moves()
-                                                
-                                            #     for c in coords:
-                                            #         if c in p.possible_moves:
-                                            #             p.possible_moves.remove(c)
-
-                                            # if p.type=="KING":
-
-                                            #     p.possible_moves = p.get_possible_moves()
-                                            # if p.type=="KING":
-                                            #     p.possible_moves = p.get_possible_moves()
-                                            # else:
-                                            #     p.possible_moves = new_possible_moves
                                         else:
                                             if p.type!="KING":
                                                 p.possible_moves = []
@@ -227,8 +212,7 @@ class Game:
                                     captured_piece=self.piece_on_coord(coord[0]+self.selected_piece.pos[1])
                                     self.pieces.remove(captured_piece)
                                     captured_piece=None
-                                self.selected_piece.attacked_cells = []
-                        # self.selected_piece=piece
+                                self.selected_piece.attacked_cells = set()
                         self.selected_piece.pos = coord
                         self.last_moved_piece = self.selected_piece
                         self.highlighted_cells = []
