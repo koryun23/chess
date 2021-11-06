@@ -34,6 +34,7 @@ class Game:
         self.rects = []
         self.highlighted_cells = []
         self.selected_piece = None
+        self.selected_cell=None
         self.selected_pieces = [] #stack of the selected pieces
         self.turn = "W"
         self.last_moved_piece = None
@@ -62,16 +63,19 @@ class Game:
                 self.running = False
             if (event.type == pg.MOUSEBUTTONDOWN and event.button==1):
                 mouse = pg.mouse.get_pos()
+
                 for cell in self.cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
                         coord = self.cell_to_coord(cell)
                         piece = self.piece_on_coord(coord)
-
+                        if not self.highlighted_cells:
+                            self.selected_cell = cell
+                        else:
+                            self.selected_cell=None
                         if piece and piece.color==self.turn:
                             if (not self.w_king.is_under_check and not self.b_king.is_under_check): #or \
-                                # (self.w_king.is_under_check and piece.type=="KING" and piece.color=="W") or \
-                                #     (self.b_king.is_under_check and piece.type=="KING" and piece.color=="B"):
+                            
                                 if self.highlighted_cells:
                                     self.highlighted_cells=[]
 
@@ -112,11 +116,12 @@ class Game:
                                         self.b_king.is_under_check=True
                                     elif p.color=="B" and self.w_king.pos in p.possible_moves:
                                         self.w_king.is_under_check=True
-                                
+
                                 for move in piece.possible_moves:
                                     possible_cell = self.coord_to_cell(move)
                                     if possible_cell:
                                         self.highlighted_cells.append(possible_cell)
+                                
 
                             else:
                                 self.selected_piece = piece
@@ -186,10 +191,13 @@ class Game:
                                             else:
                                                 p.possible_moves = p.get_possible_moves()
                                 # checking_pieces=0
+                                #self.highlighted_cells=[self.coord_to_cell(self.selected_piece.pos)]
                                 for move in piece.possible_moves:
                                     possible_cell = self.coord_to_cell(move)
                                     if possible_cell:
                                         self.highlighted_cells.append(possible_cell)
+                                
+                                #self.highlighted_cells.insert(0,piece.pos)
                         else:
                             if cell not in self.highlighted_cells:
                                 if self.highlighted_cells:
@@ -383,13 +391,15 @@ class Game:
                     self.cells.append(cell)
                 for cell in self.highlighted_cells:
                     cell.image.fill((0,0,0))
+
                 if len(self.coords)!= 64:
                     self.coords.append(self.d[j]+str(8-i))
                 pg.draw.rect(self.screen, cur_color, pg.Rect(j*60,i*60,60,60))
                 for cell in self.highlighted_cells:
                     if cell.x == j*60 and cell.y == i*60:
                         pg.draw.rect(self.screen, (255,200,0), pg.Rect(cell.x,cell.y, 60,60))
-                            
+                if self.selected_cell and self.piece_on_coord(self.cell_to_coord(self.selected_cell)):
+                    pg.draw.rect(self.screen, (255,100,0), pg.Rect(self.selected_cell.x, self.selected_cell.y,60,60))
                 if len(self.rects)!=64:
                     self.rects.append(pg.Rect(self.cells[-1].rect))
         for piece in self.pieces:
