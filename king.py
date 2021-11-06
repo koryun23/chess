@@ -9,6 +9,7 @@ class King:
         self.castled = False
         self.is_under_check=False
         self.is_under_double_check=False
+        self.is_checkmated = False
         self.type = "KING"
         self.cell = None
         self.color = color

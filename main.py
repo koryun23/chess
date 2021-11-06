@@ -273,9 +273,37 @@ class Game:
                         elif self.selected_piece.type=="ROOK":
                             self.selected_piece.moved=True
 
+                        if self.selected_piece.color=="W":
+                            king = self.b_king
+                        else:
+                            king = self.w_king
+                        
+                        if king.is_under_check:
+                            print(f"The {king.color} king is under check")
+                            #get checking piece
+                            for p in self.pieces:
 
-
-
+                                if p.color!= king.color:
+                                    p.possible_moves = p.get_possible_moves()
+                                    if (p.type=="PAWN" and king.pos in p.attacked_cells) or (p.type!="PAWN" and king.pos in p.possible_moves):
+                                        checking_piece = p
+                                        break
+                            flag = False
+                            for p in self.pieces:
+                                if p.color==king.color:
+                                    p.possible_moves = p.get_possible_moves()
+                                    if p.type=="KING" and p.possible_moves:
+                                        flag=True
+                                        break
+                                    if checking_piece.type!="PAWN" and checking_piece.type!="KNIGHT":
+                                        coords=  checking_piece.coords_to_king()
+                                        for c in coords:
+                                            if c in p.possible_moves:
+                                                flag=True
+                                                break
+                            if not flag:
+                                king.is_checkmated=True
+                                print(f"{king.color} king is checkmated")
 
     def rook_to_king(self, king, piece):
             king_pos = king.pos

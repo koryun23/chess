@@ -58,12 +58,15 @@ class Queen:
         if self.pos[0] == king.pos[0] or self.pos[1]==king.pos[1]:
             r = Rook(self.game,self.color, self.pos)
             self.game.pieces.pop()
-            return r.coords_to_king()
+            coords= r.coords_to_king()
         else:
             b = Bishop(self.game, self.color, self.pos)
             self.game.pieces.pop()
-            return b.coords_to_king()
+            coords= b.coords_to_king()
+        
 
+
+        return coords
     def is_protected(self):
         self.game.pieces.remove(self)
         for p in self.game.pieces:

@@ -107,16 +107,16 @@ class Bishop:
         if bishop_y< king_y:
             diff_y=1
         else:
-            diff_y=-1
+            diff_y=-1#
         if bishop_x<king_x:
-            diff_x=1
+            diff_x=1#
         else:
             diff_x=-1
         coord = piece.pos
         y = bishop_y#4
         x = bishop_x#1
         while coord[0]!=king_pos[0] and coord[1] !=king_pos[1]:
-            if y >= 7:
+            if y > 7:
                 break
             coord = letters[y]+str(x)
             if coord==king_pos:
@@ -125,6 +125,7 @@ class Bishop:
                 coords.append(coord)
             x+=diff_x
             y+=diff_y
+        
         return []
     def is_pinned(self):
         coords=[]
