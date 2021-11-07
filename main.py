@@ -460,36 +460,9 @@ class Game:
         for piece in self.pieces:
             if piece.pos == coord:
                 return piece
-    def draw_text(self, text, size, color, x, y):
-        font = pg.font.Font(self.font_name, size)
-        text_surface = font.render(text, True, color)
-        text_rect = text_surface.get_rect()
-        text_rect.midtop = (x,y)
-        self.screen.blit(text_surface, text_rect)
-    
-    def wait_for_key(self):
-
-        waiting = True
-        while waiting:
-            self.clock.tick(FPS)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    waiting = False
-                    self.running = False
-                    pg.quit()
-                elif event.type == pg.KEYUP:
-                    waiting = False
-    def show_go_screen(self):
-        if self.w_king.is_checkmated or self.b_king.is_checkmated:
-            self.draw_text("GAME OVER", 30, (0, 0, 0), 240,240)
-            pg.display.flip()
-            
-            self.wait_for_key()
-            self.playing=False
 
 
 g = Game()
 while g.playing:
     g.new()
-    g.show_go_screen()
 pg.quit()
