@@ -124,6 +124,10 @@ class Rook:
                 for i in range(start+1,end):
                     coords.append(letters[i]+str(king_pos[1]))
 
+            for i in range(len(coords)):
+                if len(coords[i])>2:
+                    coords[i] = coords[i][0]+coords[i][2]
+            print(coords)
             return coords
     def is_protected(self):
         self.game.pieces.remove(self)
