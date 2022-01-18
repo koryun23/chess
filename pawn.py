@@ -149,7 +149,6 @@ class Pawn:
                         b_coords = p.coords_to_king()
                         if b_coords:
                             return True
-
         return False
 
     def is_protected(self):
