@@ -111,6 +111,7 @@ class Game:
                                             if p.pos==coord and p.color==self.selected_piece.color and p.pos!=self.selected_piece.pos:
                                                 p.possible_moves = p.get_possible_moves()
                                                 self.selected_piece.possible_moves = self.selected_piece.get_possible_moves()
+
                                 else:
                                     self.selected_piece.posisble_moves = self.selected_piece.get_possible_moves()
                                 for p in self.pieces:
@@ -208,6 +209,8 @@ class Game:
                 for cell in self.highlighted_cells:
                     rect = pg.Rect(cell.x, cell.y, 60,60)
                     if self.rect_collided_point(rect, mouse[0], mouse[1]):
+                        for p in self.pieces:
+                            p.possible_moves = p.get_possible_moves()
                         if self.turn=="W":
                             self.turn="B"
                         else:
@@ -316,66 +319,18 @@ class Game:
                                 print(f"{king.color} king is checkmated")
 
     def rook_to_king(self, king, piece):
-            king_pos = king.pos
-            coords = []
-            letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
-        # if piece.type=="ROOK":
-            if piece.pos[0] == king_pos[0]:
-                if int(piece.pos[1]) > int(king_pos[1]):
-                    for i in range(int(king_pos[1]),int(piece.pos[1]),1):
-                        coords.append(king_pos[0]+str(i))
-                else:
-                    for i in range(int(piece.pos[1]), int(king_pos[1]), 1):
-                        coords.append(piece.pos+str(i))
-            else:
-                if letters.index(king_pos[0]) > letters.index(piece.pos[0]):
-                    start = letters.index(piece.pos[0])
-                    end = letters.index(king_pos[0])
-                else:
-                    start = letters.index(king_pos[0])
-                    end = letters.index(piece.pos[0])
-                for i in range(start+1,end):
-                    coords.append(letters[i]+str(king_pos[1]))
-            return coords
+        return piece.coords_to_king()
     
     def bishop_to_king(self, king, piece):
+        return piece.coords_to_king()
 
-            king_pos = king.pos
-            #bishop - b4
-            #king - e1
-            coords = []
-            letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
-            bishop_y = letters.index(piece.pos[0])
-            bishop_x = int(piece.pos[1])
-            king_y = letters.index(king_pos[0])
-            king_x = int(king_pos[1])
-            if bishop_y< king_y:
-                diff_y=1
-            else:
-                diff_y=-1
-            if bishop_x<king_x:
-                diff_x=1
-            else:
-                diff_x=-1
-            coord = piece.pos
-            y=bishop_y#4
-            x = bishop_x#1
-            while coord[0]!=king_pos[0] and coord[1] !=king_pos[1]:
-                coord =letters[y]+str(x)
-                if coord==king_pos:
-                    return coords
-                if coord!=piece.pos:
-                    coords.append(coord)
-                x+=diff_x
-                y+=diff_y
-            return []
     def queen_to_king(self, king, piece):
-        r = Rook(self, piece.color, piece.pos)
-        self.pieces.pop()
+
         b = Bishop(self, piece.color, piece.pos)
         self.pieces.pop()
-        return self.rook_to_king(king, r)+self.bishop_to_king(king, b)
-        
+        r = Rook(self, piece.color, piece.pos)
+        self.pieces.pop()
+        return b.coords_to_king()+r.coords_to_king()
     def rect_collided_point(self,rect, x, y):
         if x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom:
             return True

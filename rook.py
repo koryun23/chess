@@ -109,10 +109,10 @@ class Rook:
         # if piece.type=="ROOK":
             if piece.pos[0] == king_pos[0]:
                 if int(piece.pos[1]) > int(king_pos[1]):
-                    for i in range(int(king_pos[1]),int(piece.pos[1]),1):
+                    for i in range(int(king_pos[1])+1,int(piece.pos[1]),1):
                         coords.append(king_pos[0]+str(i))
                 else:
-                    for i in range(int(piece.pos[1]), int(king_pos[1]), 1):
+                    for i in range(int(piece.pos[1])+1, int(king_pos[1]), 1):
                         coords.append(piece.pos+str(i))
             else:
                 if letters.index(king_pos[0]) > letters.index(piece.pos[0]):

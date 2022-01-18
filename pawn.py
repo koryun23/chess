@@ -147,23 +147,10 @@ class Pawn:
                     if self.pos in p.get_possible_moves():
 
                         b_coords = p.coords_to_king()
-                        b_coords.append(p.pos)
-                        if (p.type=="QUEEN" or p.type=="ROOK") and p.pos[0] == self.pos[0]:
-                            continue
-                        for bc in b_coords:
-                            if len(bc)==3:
-                                bc = bc[0]+bc[2]
-                            coords.append(bc)
+                        if b_coords:
+                            return True
 
-        number_of_pieces = 0
-        for p in self.game.pieces:
-            for coord in coords:
-                if coord==p.pos and p.color==self.color:
-                    number_of_pieces+=1
-
-        if number_of_pieces==1:
-
-            return True
+        return False
 
     def is_protected(self):
         self.game.pieces.remove(self)
