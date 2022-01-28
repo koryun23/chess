@@ -223,6 +223,8 @@ class Game:
                             if self.selected_piece.type=="PAWN":
                                 self.selected_piece.attacked_cells = set()
 
+                            for current_piece in self.pieces:
+                                current_piece.possible_moves = current_piece.get_possible_moves()
                         elif not captured_piece:
                             
                             if self.selected_piece.type=="PAWN":
